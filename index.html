@@ -811,7 +811,9 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>Instalada se abre en pantalla completa, con su ícono de Júpiter, y funciona sin internet: tus canciones, letras y pads ya viven en el teléfono. YouTube sí necesita internet.</li>
         <li>Mantén presionado el ícono para entrar directo al modo Karaoke, DJ o Reproductor (en Android).</li>
         <li>Cuando subas una versión nueva aparece un aviso con <b>ACTUALIZAR</b>. Nada se borra al actualizar.</li>
-        <li>La pantalla no se apaga mientras suena música o está el Modo fiesta, y el reproductor se controla desde la pantalla de bloqueo.</li>
+        <li><b>Segundo plano:</b> la música sigue sonando si minimizas la app o apagas la pantalla, y el Auto DJ sigue cambiando de canción. Desde la pantalla de bloqueo puedes pausar, seguir y saltar a la siguiente.</li>
+        <li>La pantalla se queda encendida solo cuando hay algo que ver: videos, Modo fiesta, modo Karaoke o mientras grabas. Con música sola se apaga normal para ahorrar batería.</li>
+        <li>En iPhone, el switch de silencio ya no calla la Cabina. Si al bloquear se detiene, vuelve a la app y dale play; iPhone limita más el segundo plano que Android.</li>
       </ul>
       <h3>Consejos</h3>
       <ul>
@@ -845,7 +847,7 @@ try{ctx=new (window.AudioContext||window.webkitAudioContext)()}catch(e){status('
 const master=ctx.createGain();master.gain.value=.81;const lim=ctx.createDynamicsCompressor();lim.threshold.value=-2;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.002;lim.release.value=.2;master.connect(lim);lim.connect(ctx.destination);
 const unlock=()=>{if(ctx.state!=='running')ctx.resume()};
 document.addEventListener('pointerdown',unlock);document.addEventListener('keydown',unlock);
-const setP=(p,v)=>p.setTargetAtTime(v,ctx.currentTime,.015);
+const setP=(p,v)=>{try{p.setTargetAtTime(v,ctx.currentTime,.015)}catch(_){try{if(p.cancelAndHoldAtTime)p.cancelAndHoldAtTime(ctx.currentTime);else p.cancelScheduledValues(0);p.setTargetAtTime(v,ctx.currentTime,.015)}catch(__){}}};
 function makeJungle(){const sr=ctx.sampleRate,bt=.1,ft=.05,dt=.1,n1=Math.round(bt*sr);
   const dbuf=up=>{const b=ctx.createBuffer(1,n1,sr),q=b.getChannelData(0);for(let i=0;i<n1;i++)q[i]=up?(n1-i)/n1:i/n1;return b};
   const fb=ctx.createBuffer(1,n1,sr);{const q=fb.getChannelData(0),fl=Math.round(ft*sr);for(let i=0;i<n1;i++)q[i]=i<fl?Math.sqrt(i/fl):i>=n1-fl?Math.sqrt(Math.max(0,1-(i-(n1-fl))/fl)):1}
@@ -1147,7 +1149,8 @@ function drawVU(d){
 function setTxt(el,v){if(el.textContent!==v)el.textContent=v}
 let last=performance.now();
 var consoleOn=true,frameN=0;
-function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;frameN++;
+var lastFrameAt=0;
+function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;frameN++;lastFrameAt=performance.now();
   for(const d of Object.values(decks)){
     if(d.rewinding)d.angle-=dt*(100/3/60)*Math.PI*2*3.2;else if(d.playing)d.angle+=dt*(100/3/60)*Math.PI*2*d.rate*(d.braking?Math.max(0,1-(ctx.currentTime-d.startTime)/1.2):1);
     const t=pos(d);vidSync(d,false);
@@ -1157,6 +1160,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;frameN++;
   }
   autoTick();if(!$('.studio').hidden)studioTick();lyTick();clTick(dt);qTick();sleepTick();plTick();pvTick();if(!party.hidden)drawParty(dt);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
+setInterval(()=>{if(performance.now()-lastFrameAt<700)return;try{autoTick();qTick();sleepTick();if(st.playing)studioTick()}catch(_){}},500);
 
 /* ---------- Repertorio ---------- */
 let db=null;const lib=[];
@@ -1226,8 +1230,12 @@ function pickNext(curId){const L=autoList();if(!L.length)return null;
   if(auto.shuffle&&L.length>1){let e;do{e=L[Math.floor(Math.random()*L.length)]}while(e.id===curId);return e}
   const i=L.findIndex(e=>e.id===curId);return L[(i+1)%L.length]}
 function fadeLen(d){const f=+fadeSel.value;return Math.max(.05,Math.min(f,d.buffer?d.buffer.duration*.3:f))}
-function animX(to,secs){return new Promise(res=>{const from=+xf.value,t0=performance.now();
-  const step=()=>{const k=Math.min(1,(performance.now()-t0)/(secs*1000));xf.value=from+(to-from)*k;applyX();k<1?requestAnimationFrame(step):res()};step()})}
+function animX(to,secs){return new Promise(res=>{const from=+xf.value;if(!(secs>.05)){xf.value=to;applyX();res();return}
+  const N=64,cA=new Float32Array(N),cB=new Float32Array(N);for(let i=0;i<N;i++){const x=from+(to-from)*i/(N-1);cA[i]=Math.cos(x*Math.PI/2);cB[i]=Math.sin(x*Math.PI/2)}
+  const t=ctx.currentTime+.02;let ok=true;
+  for(const [g,c] of [[decks.A.xg.gain,cA],[decks.B.xg.gain,cB]]){try{if(g.cancelAndHoldAtTime)g.cancelAndHoldAtTime(ctx.currentTime);else g.cancelScheduledValues(0);g.setValueCurveAtTime(c,t,secs)}catch(_){ok=false}}
+  const t0=performance.now(),ui=()=>{const k=Math.min(1,(performance.now()-t0)/(secs*1000));xf.value=from+(to-from)*k;if(!ok)applyX();if(k<1&&!document.hidden)requestAnimationFrame(ui)};ui();
+  setTimeout(()=>{xf.value=to;const end=t+secs+.01;for(const [g,v] of [[decks.A.xg.gain,Math.cos(to*Math.PI/2)],[decks.B.xg.gain,Math.sin(to*Math.PI/2)]]){try{g.setValueAtTime(v,Math.max(ctx.currentTime,end))}catch(_){}}res()},secs*1000+80)})}
 async function autoNext(quick){
   if(auto.fading)return;auto.fading=true;let retry=false;
   try{const from=decks[auto.active],to=other(from),e=pickNext(from.trackId);
@@ -1935,21 +1943,37 @@ async function askPersist(){try{if(navigator.storage&&navigator.storage.persist&
 setTimeout(storeInfo,1500);if(isApp)askPersist();
 $('#files').addEventListener('change',()=>setTimeout(askPersist,1500));
 
-/* ---------- Pantalla encendida mientras suena ---------- */
+/* ---------- Seguir sonando en segundo plano ---------- */
+try{if(navigator.audioSession)navigator.audioSession.type='playback'}catch(_){}
+document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'&&ctx.state!=='running'&&(Object.values(decks).some(d=>d.playing)||plIsPlaying()))ctx.resume().catch(()=>{})});
+
+/* ---------- Pantalla encendida solo cuando hay algo que ver ---------- */
 let wake=null,wakeT=0;
-function wantWake(){return document.visibilityState==='visible'&&(!party.hidden||plIsPlaying()||Object.values(decks).some(d=>d.playing)||(typeof ytPlaying==='function'&&ytPlaying()))}
+function wantWake(){if(document.visibilityState!=='visible')return false;if(!party.hidden||live.on||mic.rec)return true;
+  const vidDeck=Object.values(decks).some(d=>d.playing&&d.hasVid),vidPl=plIsPlaying()&&!plVid.hidden,yt_=typeof ytPlaying==='function'&&ytPlaying();
+  return vidDeck||vidPl||yt_||(mode==='karaoke'&&Object.values(decks).some(d=>d.playing))}
 async function wakeTick(){const now=performance.now();if(now-wakeT<1500)return;wakeT=now;
   try{if(wantWake()&&!wake&&navigator.wakeLock){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>{wake=null})}
     else if(!wantWake()&&wake){const w=wake;wake=null;await w.release()}}catch(_){wake=null}}
 setInterval(wakeTick,2000);
 
-/* ---------- Controles en la pantalla de bloqueo (reproductor) ---------- */
-if('mediaSession' in navigator){const ms=navigator.mediaSession;
-  const meta=()=>{try{ms.metadata=new MediaMetadata({title:pl.name||'Cabina Júpiter',artist:'Cabina Júpiter',album:'De Fel para Júpiter',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'},{src:'icon-192.png',sizes:'192x192',type:'image/png'}]})}catch(_){}};
-  plVid.addEventListener('play',()=>{meta();ms.playbackState='playing'});plVid.addEventListener('pause',()=>{ms.playbackState='paused'});
+/* ---------- Controles en la pantalla de bloqueo (decks, piloto y reproductor) ---------- */
+if('mediaSession' in navigator){const ms=navigator.mediaSession;let lastKey='';
+  const art=[{src:'icon-512.png',sizes:'512x512',type:'image/png'},{src:'icon-192.png',sizes:'192x192',type:'image/png'}];
+  const curDeck=()=>liveDeck()||decks[auto.active]||decks.A;
+  function msTick(){let title='',artist='Cabina Júpiter',on=false;
+    if(pl.id&&(plIsPlaying()||mode==='player')){title=pl.name;artist='Cabina Júpiter · Reproductor';on=plIsPlaying()}
+    else{const d=curDeck();if(d&&d.name){title=d.name;artist=`Cabina Júpiter · Deck ${d.L}${auto.on?' · Auto DJ':''}`;on=Object.values(decks).some(x=>x.playing)}}
+    const key=title+'|'+artist;if(title&&key!==lastKey){lastKey=key;try{ms.metadata=new MediaMetadata({title,artist,album:'De Fel para Júpiter',artwork:art})}catch(_){}}
+    try{ms.playbackState=title?(on?'playing':'paused'):'none'}catch(_){}}
+  setInterval(msTick,1000);plVid.addEventListener('play',msTick);plVid.addEventListener('pause',msTick);
+  const usePl=()=>pl.id&&(plIsPlaying()||mode==='player');
   const h=(a,f)=>{try{ms.setActionHandler(a,f)}catch(_){}};
-  h('play',()=>{unlock();plGraph();plVid.play().catch(()=>{})});h('pause',()=>plVid.pause());h('nexttrack',()=>plStep(1));
-  h('previoustrack',()=>{if(plVid.currentTime>3)plVid.currentTime=0;else plStep(-1)});h('seekto',d=>{if(d&&d.seekTime!=null)plVid.currentTime=d.seekTime})}
+  h('play',()=>{unlock();if(usePl()){plGraph();plVid.play().catch(()=>{})}else{const d=curDeck();if(d&&d.buffer)play(d)}setTimeout(msTick,100)});
+  h('pause',()=>{if(usePl())plVid.pause();for(const d of Object.values(decks))if(d.playing)pause(d);setTimeout(msTick,100)});
+  h('nexttrack',()=>{if(usePl())plStep(1);else if(auto.on)autoNext(true);else{const d=curDeck();if(d&&d.buffer)seek(d,Math.max(0,d.buffer.duration-.2))}});
+  h('previoustrack',()=>{if(usePl()){if(plVid.currentTime>3)plVid.currentTime=0;else plStep(-1)}else{const d=curDeck();if(d&&d.buffer)seek(d,0)}});
+  h('seekto',e=>{if(!e||e.seekTime==null)return;if(usePl())plVid.currentTime=e.seekTime;else{const d=curDeck();if(d&&d.buffer)seek(d,e.seekTime)}})}
 
 /* ---------- Grabar la voz con el micrófono ---------- */
 const mic={rec:false,chunks:[]};let micModule=false;
