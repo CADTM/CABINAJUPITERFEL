@@ -330,6 +330,13 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 .yt-open{display:inline-flex;align-items:center;height:30px;padding:0 12px;margin-left:6px;border-radius:999px;background:#d8322b;color:#fff;font-family:var(--f-disp);font-size:11px;letter-spacing:.08em;text-decoration:none;box-shadow:0 0 14px rgba(255,78,69,.4)}
 .yt-list li .q-t small{font-family:var(--f-mono)}
 .yt-note{margin:0;font-size:12.5px;color:var(--muted);max-width:72ch}
+.ly-view{position:relative;min-height:200px;user-select:none;-webkit-user-select:none}
+.ly-view.marking{cursor:pointer;touch-action:manipulation;box-shadow:inset 0 0 0 2px var(--cue),0 0 26px rgba(255,91,69,.25)}
+.ly-view.marking .ly-next{color:var(--a);font-weight:600}
+.ly-view.tap{background:radial-gradient(ellipse at 50% 50%,rgba(255,91,69,.22),transparent 70%),var(--well)}
+.ly-hint{font-family:var(--f-disp);font-size:10px;letter-spacing:.18em;color:var(--cue)}
+.ly-off{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
+.ly-off .kout{min-width:52px;text-align:center;font-family:var(--f-mono);font-size:13px}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -427,18 +434,19 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
   </section>
 
   <section class="lyr" aria-label="Letras en pantalla">
-    <div class="lib-head"><h2>Letras en pantalla</h2><span class="chip">Pega la letra, marca los tiempos una vez y después avanza sola</span></div>
+    <div class="lib-head"><h2>Letras en pantalla</h2><span class="chip">Pega la letra, toca GRABAR TIEMPOS y toca la letra cada vez que empiece un verso</span></div>
     <div class="ly-grid">
       <div class="ly-col">
-        <label class="st-row"><span class="st-k">SIGUE AL</span><select id="lyDeck"><option value="A">Deck A · Io</option><option value="B">Deck B · Europa</option></select></label>
+        <label class="st-row"><span class="st-k">SIGUE A</span><select id="lyDeck"><option value="auto">Lo que esté sonando</option><option value="A">Deck A</option><option value="B">Deck B</option><option value="yt">Video de YouTube</option></select></label>
         <div class="st-name" id="lyTrack">—</div>
-        <textarea id="lyText" rows="8" placeholder="Pega aquí la letra, un verso por renglón."></textarea>
-        <div class="st-btns"><button class="tog" id="lySave">GUARDAR LETRA</button><button class="tog rec" id="lyMark" aria-pressed="false">● MARCAR TIEMPOS</button><button class="tog" id="lyClear">BORRAR TIEMPOS</button></div>
-        <p class="st-note" id="lyInfo">La letra se guarda junto a la canción del deck, en este navegador.</p>
+        <textarea id="lyText" rows="8" placeholder="Pega aquí la letra, un verso por renglón. Se guarda sola."></textarea>
+        <p class="st-note" id="lyInfo"></p>
       </div>
       <div class="ly-col">
-        <div class="ly-view" id="lyView"><div class="ly-prev"></div><div class="ly-cur"></div><div class="ly-next"></div></div>
-        <div class="st-btns"><button class="tog" id="lyPrev">‹ ANTERIOR</button><button class="tog" id="lyNext">SIGUIENTE ›</button><button class="tog" id="lyBig">PANTALLA GRANDE</button></div>
+        <div class="ly-view" id="lyView"><div class="ly-hint" id="lyHint" hidden>TOCA AQUÍ CUANDO EMPIECE EL VERSO QUE SIGUE</div><div class="ly-prev"></div><div class="ly-cur"></div><div class="ly-next"></div></div>
+        <div class="st-btns" id="lyRow1"><button class="tog rec" id="lyMark">● GRABAR TIEMPOS</button><button class="tog" id="lyPrev">‹ ANTERIOR</button><button class="tog" id="lyNext">SIGUIENTE ›</button><button class="tog" id="lyBig">PANTALLA GRANDE</button></div>
+        <div class="st-btns" id="lyRow2" hidden><button class="tog" id="lyUndo">↶ DESHACER</button><button class="tog rec" id="lyDone">■ TERMINAR</button></div>
+        <div class="ly-off"><span class="st-k">AJUSTE</span><button class="mini" id="lyOffDn">ADELANTAR</button><output class="kout" id="lyOffO">0.0 s</output><button class="mini" id="lyOffUp">ATRASAR</button><span class="sep"></span><button class="mini" id="lyRe">RE-MARCAR DESDE AQUÍ</button><button class="mini" id="lyClear">BORRAR TIEMPOS</button></div>
       </div>
     </div>
   </section>
@@ -649,11 +657,18 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
       </ul>
       <h3>Letras en pantalla</h3>
       <ol>
-        <li>Elige qué deck sigue la letra, pégala un verso por renglón y toca <b>GUARDAR LETRA</b>.</li>
-        <li>Toca <b>MARCAR TIEMPOS</b>, dale ▶ al deck y toca <b>SIGUIENTE</b> (o la tecla N) justo cuando empieza cada verso.</li>
-        <li>Listo: la próxima vez la letra avanza sola y el verso actual se va pintando. Con tiempos marcados, ANTERIOR y SIGUIENTE mueven la canción a ese verso.</li>
-        <li>Sin tiempos, puedes avanzar a mano con SIGUIENTE. <b>PANTALLA GRANDE</b> la muestra en el Modo fiesta.</li>
+        <li>Carga la canción en un deck. <b>SIGUE A</b> en "Lo que esté sonando" toma sola la canción que suena.</li>
+        <li>Pega la letra, un verso por renglón. Se guarda sola junto a esa canción.</li>
+        <li>Toca <b>GRABAR TIEMPOS</b>: la canción empieza desde el principio. Toca el recuadro de la letra (o la barra espaciadora) cada vez que empiece el verso que aparece como "Sigue".</li>
+        <li>¿Te equivocaste? <b>DESHACER</b> regresa la canción al verso anterior para que vuelvas a marcar. <b>TERMINAR</b> guarda lo que llevas.</li>
+        <li>Listo: la próxima vez la letra avanza sola y el verso actual se va pintando.</li>
       </ol>
+      <ul>
+        <li>Si toda la letra va tarde, toca <b>ADELANTAR</b>; si va antes de tiempo, <b>ATRASAR</b>. Cada toque mueve 0.1 segundos y se guarda por canción.</li>
+        <li>Si solo una parte quedó mal, deja que la canción llegue ahí y toca <b>RE-MARCAR DESDE AQUÍ</b>: conserva lo de antes y marcas desde ese verso.</li>
+        <li>Sin tiempos marcados, <b>SIGUIENTE</b> avanza la letra a mano. Con tiempos, ANTERIOR y SIGUIENTE mueven la canción al verso.</li>
+        <li>También puedes marcar desde <b>PANTALLA GRANDE</b>: toca la letra en el Modo fiesta.</li>
+      </ul>
       <h3>Modo fiesta</h3>
       <p>El botón <b>MODO FIESTA</b> llena la pantalla con Júpiter, sus lunas y luces que se mueven con la música, más la letra en grande. <b>LUCES</b> y <b>LETRAS</b> se prenden o apagan, <b>APLAUDIR</b> suma al aplausómetro y <b>SALIR</b> (o Esc) regresa a la consola. Las luces cambian suave, sin destellos bruscos.</p>
       <h3>Karaoke de YouTube</h3>
@@ -662,6 +677,7 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
         <li>Copia el enlace del video, pégalo en la Cabina, ponle nombre si quieres y toca <b>GUARDAR ENLACE</b>. Se guarda en este navegador y en el respaldo.</li>
         <li><b>▶ VER AQUÍ</b> muestra el video dentro de la Cabina; <b>YOUTUBE ↗</b> lo abre en YouTube. <b>A LA COLA</b> lo anota con el nombre escrito en la Cola de karaoke. <b>COPIAR</b> copia el enlace.</li>
         <li>Algunos videos no dejan verse fuera de YouTube; para esos la Cabina te avisa y usas YOUTUBE ↗.</li>
+        <li>Las letras también siguen al video de YouTube que ves aquí: elige <b>SIGUE A</b> "Video de YouTube" o deja "Lo que esté sonando" y marca los tiempos igual que con una canción.</li>
         <li>En la cola, al llegar su turno el video aparece en la Cabina y el aplausómetro arranca. Cuando el video termina, el turno se califica solo; también puedes tocar <b>TERMINAR TURNO</b>.</li>
         <li>El video suena desde YouTube, así que quitar voz, tono, letras y estudio de voz no aplican ahí.</li>
       </ul>
@@ -1279,40 +1295,72 @@ document.addEventListener('keydown',e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.rep
   else if(e.key==='Escape'&&!party.hidden)closeParty()});
 
 /* ---------- Letras en pantalla ---------- */
-const ly={deck:'A',lines:[],times:[],idx:-1,mark:false,trackId:undefined};
-const lyText=$('#lyText'),lyMarkBtn=$('#lyMark');
+const ly={key:undefined,lines:[],times:[],off:0,idx:-1,shown:-1,mark:false,src:null,last:'A',lastKind:'deck'};
+const REACT=.15,lyText=$('#lyText');
 const lyViews=[$('#lyView'),$('#partyLy')].map(v=>({prev:$('.ly-prev',v),cur:$('.ly-cur',v),next:$('.ly-next',v)}));
 const splitLines=t=>t.split(/\r?\n/).map(x=>x.trim()).filter(Boolean);
-function lyLoadFor(d){ly.trackId=d.trackId;let data=null;try{data=JSON.parse(localStorage.getItem('cabina-ly:'+d.trackId)||'null')}catch(_){}
-  lyText.value=data&&data.text||'';ly.lines=splitLines(lyText.value);ly.times=data&&data.times||[];ly.idx=-1;setMark(false)}
-function lySaveNow(){if(!ly.trackId)return true;try{localStorage.setItem('cabina-ly:'+ly.trackId,JSON.stringify({text:lyText.value,times:ly.times}));return true}catch(_){return false}}
-function setMark(on){ly.mark=on;lyMarkBtn.setAttribute('aria-pressed',String(on));lyMarkBtn.textContent=on?'■ DEJAR DE MARCAR':'● MARCAR TIEMPOS'}
-$('#lyDeck').onchange=e=>{ly.deck=e.target.value;lyLoadFor(decks[ly.deck])};
-$('#lySave').onclick=()=>{if(!decks[ly.deck].trackId){status('Primero carga una canción en ese deck.');return}
-  ly.lines=splitLines(lyText.value);if(ly.times.length>ly.lines.length)ly.times.length=ly.lines.length;
-  status(lySaveNow()?`Letra guardada: ${ly.lines.length} versos.`:'No se pudo guardar la letra en este navegador.')};
-lyMarkBtn.onclick=()=>{if(ly.mark){setMark(false);lySaveNow();status('Tiempos guardados.');return}
-  const d=decks[ly.deck];if(!d.buffer){status('Primero carga una canción en ese deck.');return}
+const DSRC=L=>({kind:'deck',d:decks[L],L});
+function ytSrcOn(){return typeof yt!=='undefined'&&!!yt&&!!yt.p&&!!yt.p.getPlayerState&&!$('#ytStage').hidden}
+function ytPlaying(){try{return ytSrcOn()&&yt.p.getPlayerState()===1}catch(_){return false}}
+function resolveSrc(){const v=$('#lyDeck').value;if(v==='A'||v==='B')return DSRC(v);if(v==='yt')return{kind:'yt'};
+  if(ytPlaying())return{kind:'yt'};const live=liveDeck();if(live)return DSRC(live.L);if(ly.lastKind==='yt'&&ytSrcOn())return{kind:'yt'};return DSRC(ly.last)}
+const srcReady=s=>s.kind==='yt'?ytSrcOn()&&!!yt.vid:!!s.d.buffer;
+const srcKey=s=>s.kind==='yt'?'yt:'+yt.vid:s.d.trackId;
+function srcTime(s){if(s.kind==='yt'){try{return yt.p.getCurrentTime()||0}catch(_){return 0}}return pos(s.d)}
+function srcSeek(s,t){t=Math.max(0,t);if(s.kind==='yt'){try{yt.p.seekTo(t,true)}catch(_){}}else seek(s.d,t)}
+function srcPlay(s){if(s.kind==='yt'){try{yt.p.playVideo()}catch(_){}}else if(!s.d.playing)play(s.d)}
+function srcName(s){if(s.kind==='yt'){const y=(ytList||[]).find(x=>x.vid===yt.vid);return(y?y.title:'Video')+' · YouTube'}return`${s.d.name} · Deck ${s.L}`}
+function lyLoad(key){const keep=!ly.key&&lyText.value.trim()?lyText.value:'';ly.key=key;let data=null;
+  if(key)try{data=JSON.parse(localStorage.getItem('cabina-ly:'+key)||'null')}catch(_){}
+  lyText.value=data&&data.text||keep;ly.lines=splitLines(lyText.value);ly.times=data&&data.times||[];ly.off=data&&data.off||0;ly.idx=-1;
+  if(!data&&keep&&key)lySave();lyInfo()}
+function lySave(){if(!ly.key)return false;try{localStorage.setItem('cabina-ly:'+ly.key,JSON.stringify({text:lyText.value,times:ly.times,off:ly.off}));return true}catch(_){return false}}
+function lyInfo(){const n=ly.lines.length,m=ly.times.filter(t=>t!=null).length;
+  $('#lyInfo').textContent=!ly.key?'Carga una canción en un deck para guardarle la letra.':!n?'Pega la letra, un verso por renglón. Se guarda sola.':
+    m>=n?`${n} versos · tiempos listos: la letra avanza sola.`:m?`${n} versos · ${m} con tiempo. Usa RE-MARCAR DESDE AQUÍ para completar.`:`${n} versos · sin tiempos. Toca GRABAR TIEMPOS.`;
+  $('#lyOffO').textContent=(ly.off>0?'+':'')+ly.off.toFixed(1)+' s';
+  $('#lyRow1').hidden=ly.mark;$('#lyRow2').hidden=!ly.mark;$('#lyView').classList.toggle('marking',ly.mark);$('#lyHint').hidden=!ly.mark}
+let lyT;lyText.oninput=()=>{clearTimeout(lyT);lyT=setTimeout(()=>{ly.lines=splitLines(lyText.value);if(ly.times.length>ly.lines.length)ly.times.length=ly.lines.length;lySave();lyInfo()},400)};
+function lyStartMark(from){const s=resolveSrc();
+  if(!srcReady(s)){status('Primero carga la canción en un deck'+(typeof yt!=='undefined'?' o abre el video con VER AQUÍ':'')+'.');return}
+  clearTimeout(lyT);const txt=lyText.value;if(srcKey(s)!==ly.key){lyLoad(srcKey(s));if(!splitLines(lyText.value).length)lyText.value=txt}
   ly.lines=splitLines(lyText.value);if(!ly.lines.length){status('Pega la letra primero.');return}
-  ly.times=[];ly.idx=-1;setMark(true);status('Dale ▶ al deck y toca SIGUIENTE (o N) cuando empiece cada verso.')};
-$('#lyClear').onclick=()=>{ly.times=[];ly.idx=-1;lySaveNow();status('Tiempos borrados.')};
-function lyNext(){const d=decks[ly.deck];if(!ly.lines.length)return;
-  if(ly.mark){if(ly.idx+1<ly.lines.length){ly.idx++;ly.times[ly.idx]=pos(d)}
-    if(ly.idx>=ly.lines.length-1){setMark(false);lySaveNow();status('Tiempos listos. La letra ya avanza sola.')}return}
-  const t=ly.times[ly.idx+1];if(ly.times.length&&t!=null){seek(d,t);return}
+  ly.src=s;ly.mark=true;
+  if(from<=0){ly.times=[];ly.idx=-1;srcSeek(s,0)}else{ly.times.length=from;ly.idx=from-1;srcSeek(s,(ly.times[from-1]||0)-.5)}
+  srcPlay(s);lyInfo();status('Marcando: toca la letra o la barra espaciadora cuando empiece cada verso.')}
+function lyTap(){if(!ly.mark||ly.idx+1>=ly.lines.length)return;ly.idx++;ly.times[ly.idx]=Math.max(0,srcTime(ly.src)-REACT);
+  const v=$('#lyView');v.classList.add('tap');setTimeout(()=>v.classList.remove('tap'),120);
+  if(ly.idx>=ly.lines.length-1)lyStopMark(true)}
+function lyUndo(){if(!ly.mark)return;if(ly.idx<0){srcSeek(ly.src,0);return}
+  ly.times.length=ly.idx;ly.idx--;srcSeek(ly.src,ly.idx>=0?ly.times[ly.idx]-.3:0);status('Vuelve a marcar el verso.')}
+function lyStopMark(done){if(!ly.mark)return;ly.mark=false;ly.src=null;lySave();lyInfo();
+  status(done?'¡Listo! La letra ya avanza sola. Si va tarde o adelantada, usa el AJUSTE.':'Tiempos guardados hasta donde marcaste.')}
+function lyNext(){if(ly.mark){lyTap();return}const s=resolveSrc();
+  if(ly.times.length){const t=ly.times[ly.shown+1];if(t!=null)srcSeek(s,t+ly.off);return}
   ly.idx=Math.min(ly.idx+1,ly.lines.length-1)}
-function lyPrev(){const d=decks[ly.deck];
-  if(ly.mark){ly.idx=Math.max(-1,ly.idx-1);ly.times.length=ly.idx+1;return}
-  if(ly.times.length){const i=Math.max(0,ly.idx-1);if(ly.times[i]!=null)seek(d,ly.times[i]);return}
+function lyPrev(){if(ly.mark){lyUndo();return}const s=resolveSrc();
+  if(ly.times.length){const t=ly.times[Math.max(0,ly.shown-1)];if(t!=null)srcSeek(s,t+ly.off);return}
   ly.idx=Math.max(-1,ly.idx-1)}
-$('#lyNext').onclick=lyNext;$('#lyPrev').onclick=lyPrev;
-$('#lyBig').onclick=()=>openParty();
-function lyTick(){const d=decks[ly.deck];if(d.trackId!==ly.trackId)lyLoadFor(d);
-  setTxt($('#lyTrack'),d.name||'Sin canción en ese deck');
-  const t=pos(d),L=ly.lines;let i=ly.idx,pr=1;
-  if(!ly.mark&&ly.times.length){i=-1;for(let k=0;k<ly.times.length;k++)if(ly.times[k]!=null&&ly.times[k]<=t)i=k;ly.idx=i;
-    if(i>=0){const nx=ly.times[i+1]!=null?ly.times[i+1]:ly.times[i]+4;pr=clamp((t-ly.times[i])/Math.max(.1,nx-ly.times[i]),0,1)}}
-  const cur=i>=0?L[i]:(L.length?'· · ·':'Pega una letra para verla aquí'),prev=i>0?L[i-1]:'',next=L[i+1]||'';
+$('#lyMark').onclick=()=>lyStartMark(0);$('#lyUndo').onclick=lyUndo;$('#lyDone').onclick=()=>lyStopMark(false);
+$('#lyNext').onclick=lyNext;$('#lyPrev').onclick=lyPrev;$('#lyBig').onclick=()=>openParty();
+$('#lyRe').onclick=()=>{if(!ly.times.length){lyStartMark(0);return}lyStartMark(Math.max(0,ly.shown))};
+$('#lyClear').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.ask='1';b.textContent='¿BORRAR?';setTimeout(()=>{delete b.dataset.ask;b.textContent='BORRAR TIEMPOS'},3000);return}
+  delete b.dataset.ask;b.textContent='BORRAR TIEMPOS';ly.times=[];ly.idx=-1;lySave();lyInfo();status('Tiempos borrados.')};
+const lyOff=d=>{ly.off=clamp(Math.round((ly.off+d)*10)/10,-5,5);lySave();lyInfo()};
+$('#lyOffDn').onclick=()=>lyOff(-.1);$('#lyOffUp').onclick=()=>lyOff(.1);
+$('#lyDeck').onchange=()=>{if(!ly.mark)ly.key=null};
+for(const v of [$('#lyView'),$('#partyLy')])v.addEventListener('pointerdown',e=>{if(!ly.mark)return;e.preventDefault();lyTap()});
+document.addEventListener('keydown',e=>{if(ly.mark&&e.code==='Space'&&!e.repeat&&!typing(e.target)&&man.hidden){e.preventDefault();lyTap()}});
+function lyTick(){if($('.lyr').hidden&&party.hidden&&!ly.mark)return;
+  const s=ly.mark?ly.src:resolveSrc();
+  if(!ly.mark){if(s.kind==='deck'&&s.d.playing){ly.last=s.L;ly.lastKind='deck'}else if(s.kind==='yt'&&ytPlaying())ly.lastKind='yt'}
+  const ready=srcReady(s),key=ready?srcKey(s):undefined;if(!ly.mark&&key!==ly.key)lyLoad(key);
+  setTxt($('#lyTrack'),ready?srcName(s):'Sin canción: carga una en un deck');
+  const t=ready?srcTime(s):0,L=ly.lines;let i=ly.idx,pr=1;
+  if(!ly.mark&&ly.times.length){i=-1;for(let k=0;k<ly.times.length;k++)if(ly.times[k]!=null&&ly.times[k]+ly.off<=t)i=k;
+    if(i>=0){const st=ly.times[i]+ly.off,nx=ly.times[i+1]!=null?ly.times[i+1]+ly.off:st+4;pr=clamp((t-st)/Math.max(.1,nx-st),0,1)}}
+  ly.shown=i;
+  const cur=i>=0?L[i]:(L.length?'· · ·':'Pega una letra para verla aquí'),prev=i>0?L[i-1]:'',nx=L[i+1]||'',next=ly.mark&&nx?'Sigue: '+nx:nx;
   for(const v of lyViews){setTxt(v.prev,prev);setTxt(v.cur,cur);setTxt(v.next,next);v.cur.style.setProperty('--p',(i>=0?pr*100:100).toFixed(1)+'%')}}
 
 /* ---------- Aplausómetro ---------- */
@@ -1430,7 +1478,7 @@ $('#qAdd').onclick=()=>{const name=$('#qName').value.trim(),tid=$('#qSong').valu
 $('#qName').onkeydown=e=>{if(e.key==='Enter')$('#qAdd').click()};
 async function qNext(){if(turn)qFinish();const it=queue.shift();saveQ();renderQ();if(!it){status('La cola está vacía.');return}
   if(it.yt){if(auto.on)autoStop();for(const d of Object.values(decks))if(d.playing)pause(d);plPause();pvStop();
-    $('#clName').value=it.name;clStart();turn={name:it.name,song:it.yt.title,yt:it.yt};$('#qEnd').disabled=false;updateQNow();ytShow(it.yt,true);status(`Turno de ${it.name}`);return}
+    $('#lyDeck').value='auto';$('#clName').value=it.name;clStart();turn={name:it.name,song:it.yt.title,yt:it.yt};$('#qEnd').disabled=false;updateQNow();ytShow(it.yt,true);status(`Turno de ${it.name}`);return}
   const e=lib.find(x=>x.id===it.trackId);if(!e){status(`No encuentro la canción de ${it.name}.`);return}
   if(auto.on)autoStop();const L=decks.A.playing&&!decks.B.playing?'B':'A',d=decks[L];
   if(!await loadToDeck(L,e))return;const o=other(d);if(o.playing)pause(o);xf.value=L==='A'?0:1;applyX();d.startPos=0;play(d);
