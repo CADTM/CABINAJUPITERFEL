@@ -49,8 +49,8 @@ body::after{content:"";position:fixed;right:-26vmax;bottom:-30vmax;width:62vmax;
 .status{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-height:1.4em}
 .console{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px) minmax(0,1fr);gap:12px;align-items:start}
 @media (max-width:920px){.console{grid-template-columns:minmax(0,1fr)}}
-.deck,.mixer,.lib,.studio,.fx,.lyr,.clap,.queue,.msgs,.kbsec,.plsec,.yt{--hud:var(--line-hi);position:relative;background:linear-gradient(180deg,rgba(255,220,180,.04),transparent 35%),var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 14px;min-width:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,220,180,.07)}
-.deck::before,.mixer::before,.lib::before,.studio::before,.fx::before,.lyr::before,.clap::before,.queue::before,.msgs::before,.kbsec::before,.plsec::before,.yt::before{content:"";position:absolute;inset:5px;border-radius:10px;pointer-events:none;opacity:.9;
+.deck,.mixer,.lib,.studio,.fx,.lyr,.clap,.queue,.msgs,.kbsec,.plsec,.yt,.hist{--hud:var(--line-hi);position:relative;background:linear-gradient(180deg,rgba(255,220,180,.04),transparent 35%),var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 14px;min-width:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,220,180,.07)}
+.deck::before,.mixer::before,.lib::before,.studio::before,.fx::before,.lyr::before,.clap::before,.queue::before,.msgs::before,.kbsec::before,.plsec::before,.yt::before,.hist::before{content:"";position:absolute;inset:5px;border-radius:10px;pointer-events:none;opacity:.9;
   background:linear-gradient(var(--hud),var(--hud)) left top/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) left top/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) right top/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) right top/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) left bottom/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) left bottom/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) right bottom/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) right bottom/2px 16px no-repeat}
 .deck{--c:var(--a);--hud:var(--c);display:grid;gap:10px;border-color:color-mix(in srgb,var(--c) 34%,var(--line));box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 30px color-mix(in srgb,var(--c) 10%,transparent),inset 0 1px 0 rgba(255,220,180,.07)}
 #deckB{--c:var(--b)}
@@ -346,6 +346,9 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 .ly-hint{font-family:var(--f-disp);font-size:10px;letter-spacing:.18em;color:var(--cue)}
 .ly-off{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .ly-off .kout{min-width:52px;text-align:center;font-family:var(--f-mono);font-size:13px}
+.hist{display:grid;gap:12px}
+.hs-t{font-family:var(--f-mono);font-size:12px;color:var(--a);min-width:44px}
+.hs-n{font-family:var(--f-mono);font-size:12px;color:var(--a);min-width:30px}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -535,6 +538,14 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
     </div>
   </section>
 
+  <section class="hist" aria-label="Historial">
+    <div class="lib-head"><h2>Historial</h2><span class="chip">Lo que se cantó y se tocó, con quién y su calificación</span></div>
+    <div class="cl-grid">
+      <div class="cl-col"><span class="st-k">HOY</span><ol class="q-list" id="hsToday"></ol></div>
+      <div class="cl-col"><span class="st-k">LO MÁS CANTADO</span><ol class="q-list" id="hsTop"></ol><div><button class="mini" id="hsClear">BORRAR HISTORIAL</button></div></div>
+    </div>
+  </section>
+
   <section class="msgs" aria-label="Mensajes en pantalla">
     <div class="lib-head"><h2>Mensajes en pantalla</h2><span class="chip">Pasan como cinta en el Modo fiesta</span></div>
     <div class="q-add"><input id="msgText" maxlength="120" placeholder="Ej. ¡Feliz cumpleaños!" autocomplete="off" aria-label="Mensaje"><button class="tog" id="msgAdd">AGREGAR</button></div>
@@ -563,7 +574,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
       <span class="st-k">LA VOZ ENTRA EN</span><output id="stStartO" class="st-big">0:00.0</output>
       <div class="st-btns"><button class="mini" data-n="-1">−1 s</button><button class="mini" data-n="-0.1">−0.1</button><button class="mini" data-n="0.1">+0.1</button><button class="mini" data-n="1">+1 s</button><button class="mini" id="stUseDeck">POSICIÓN DEL DECK</button><button class="mini" id="stAuto">ALINEAR AUTO</button></div>
     </div>
-    <div class="st-tx"><button class="tog" id="stPlay">▶ ESCUCHAR</button><button class="tog rec" id="stRec" aria-pressed="false">● GRABAR MEZCLA</button><button class="tog" id="stSave" disabled>GUARDAR MEZCLA</button><span class="st-pos" id="stPos">0:00.0</span></div>
+    <div class="st-tx"><button class="tog" id="stPlay">▶ ESCUCHAR</button><button class="tog rec" id="stRec" aria-pressed="false">● GRABAR MEZCLA</button><button class="tog" id="stSave" disabled>GUARDAR MEZCLA</button><button class="tog" id="stShare" disabled>COMPARTIR</button><span class="st-pos" id="stPos">0:00.0</span></div>
     <div class="st-tx"><button class="tog rec" id="stMic" aria-pressed="false">● GRABAR CON MICRÓFONO</button><label class="st-chk"><input type="checkbox" id="stPhones" checked> Uso audífonos</label></div>
     <p class="st-note" id="stNote">Ponte audífonos, elige la pista y toca GRABAR CON MICRÓFONO: la canción empieza y tu voz queda sincronizada sola. También puedes subir una grabación hecha aparte.</p>
   </section>
@@ -600,8 +611,10 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
       <div class="live-row"><span class="st-k">MIC</span><div class="live-meter"><i id="liveLvl"></i></div></div>
       <label class="st-chk"><input type="checkbox" id="liveMusic" checked> Incluir la música en la grabación</label>
       <label class="st-chk"><input type="checkbox" id="livePhones" checked> Uso audífonos</label>
+      <label class="st-row"><span class="st-k">EFECTO DE VOZ</span><select id="liveFx"><option value="normal">Normal</option><option value="estadio">Estadio</option><option value="radio">Radio vieja</option><option value="robot">Robot</option><option value="grave">Voz grave</option><option value="aguda">Voz aguda</option></select></label>
+      <label class="st-chk"><input type="checkbox" id="liveMon"> Escucharme en los audífonos</label>
       <label class="master"><span>ECO</span><input type="range" id="liveEcho" min="0" max="0.8" step="0.01" value="0.2"><output id="liveEchoO">20%</output></label>
-      <div class="st-btns" id="liveAfter" hidden><button class="tog" id="livePlay">▶ ESCUCHAR</button><button class="tog" id="liveSave">GUARDAR</button><button class="tog" id="liveDel">DESCARTAR</button></div>
+      <div class="st-btns" id="liveAfter" hidden><button class="tog" id="livePlay">▶ ESCUCHAR</button><button class="tog" id="liveSave">GUARDAR</button><button class="tog" id="liveShare">COMPARTIR</button><button class="tog" id="liveDel">DESCARTAR</button></div>
       <p class="st-note" id="liveNote">Ponte audífonos, dale play al karaoke y toca GRABAR MI VOZ. Graba desde ese momento, con la música y tu voz juntas.</p>
     </div>
     <div class="live-row"><button class="live-gear" id="liveGear" aria-label="Opciones de grabación" aria-expanded="false">AJUST</button><button class="live-fab" id="liveBtn"><span class="dot" aria-hidden="true"></span><span id="liveLbl">GRABAR MI VOZ</span></button></div>
@@ -755,6 +768,12 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>El público toca <b>APLAUDIR</b> (o la tecla A). El medidor sube con cada aplauso y baja si dejan de aplaudir.</li>
         <li><b>TERMINAR Y CALIFICAR</b> da una calificación de 0 a 100 con estrellas y la anota en la <b>Tabla de la noche</b>.</li>
       </ul>
+      <h3>Historial</h3>
+      <ul>
+        <li><b>HOY</b> muestra lo de las últimas 12 horas: la hora, la canción, quién la cantó, su calificación del aplausómetro y si se grabó.</li>
+        <li><b>LO MÁS CANTADO</b> junta las favoritas de siempre. <b>OTRA VEZ</b> la manda a un deck (o al reproductor en modo Reproductor) para repetirla rápido.</li>
+        <li>Se guarda en este aparato y entra en el respaldo. <b>BORRAR HISTORIAL</b> pide un segundo toque para confirmar.</li>
+      </ul>
       <h3>Mensajes en pantalla</h3>
       <ul>
         <li>Escribe un mensaje y toca <b>AGREGAR</b>. Todos pasan como cinta en la parte de abajo del Modo fiesta.</li>
@@ -768,6 +787,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>Ponte audífonos y toca <b>GRABAR CON MICRÓFONO</b>. La primera vez el navegador pide permiso para el micrófono. La canción empieza desde el principio; canta y toca <b>PARAR GRABACIÓN</b> cuando termines (o deja que acabe la canción). Tu voz queda sincronizada sola.</li>
         <li>Sin audífonos, desmarca "Uso audífonos": el teléfono intentará no grabar la música, aunque la voz puede sonar más apagada.</li>
         <li>También puedes subir una grabación hecha aparte con <b>Grabar o subir voz</b>.</li>
+        <li>Después de <b>GRABAR MEZCLA</b> puedes <b>GUARDAR</b> o <b>COMPARTIR</b> directo a WhatsApp.</li>
         <li>Ajusta <b>LA VOZ ENTRA EN</b> con ±1 s y ±0.1, con <b>POSICIÓN DEL DECK</b>, o con <b>ALINEAR AUTO</b>. El automático funciona cuando en tu grabación se alcanza a oír la música; si grabaste con audífonos, ajústalo a mano.</li>
         <li>Mueve <b>PISTA</b>, <b>VOZ</b> y <b>ECO ESPACIAL</b> y dale <b>ESCUCHAR</b>. Toca la línea de tiempo para escuchar desde otro punto.</li>
         <li><b>GRABAR MEZCLA</b> la reproduce completa y la graba. Al terminar, <b>GUARDAR MEZCLA</b> te da el archivo de audio.</li>
@@ -793,6 +813,9 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>Ponte audífonos, dale play al karaoke (deck, reproductor o YouTube) y tócalo. Graba desde ese momento; toca <b>■ PARAR</b> al terminar.</li>
         <li>La grabación junta la música y tu voz ya sincronizadas, con un poco de eco. Al terminar puedes <b>ESCUCHAR</b>, <b>GUARDAR</b> o <b>DESCARTAR</b>.</li>
         <li><b>AJUST</b> abre las opciones: incluir o no la música, si usas audífonos, el eco y el nivel de tu micrófono.</li>
+        <li><b>EFECTO DE VOZ</b>: Normal, Estadio, Radio vieja, Robot, Voz grave o Voz aguda. Se elige antes de grabar.</li>
+        <li><b>Escucharme en los audífonos</b> te deja oír tu voz con el efecto mientras cantas. Solo funciona con audífonos (con bocina haría chillido). En algunos teléfonos se nota un pequeño retraso; si te estorba, apágalo.</li>
+        <li><b>COMPARTIR</b> manda la grabación directo a WhatsApp u otra app. Si tu aparato no lo permite, usa GUARDAR. TikTok y Facebook piden video, así que ahí súbela desde tus archivos dentro de un video.</li>
         <li>Con videos de YouTube solo se graba tu voz: YouTube no deja grabar su música.</li>
         <li>Si quieres afinar el tiempo de tu voz o grabar la canción desde el principio, usa el Estudio de voz.</li>
       </ul>
@@ -944,7 +967,7 @@ function rewind(d){if(!d.buffer||d.rewinding)return;const p=pos(d),len=Math.min(
 function stopSrc(d){if(d.src){const s=d.src;d.src=null;s.onended=null;try{s.stop()}catch(e){}s.disconnect()}}
 function play(d){
   if(!d.buffer)return;unlock();stopSrc(d);plPause();ytPause();
-  let off=d.startPos;if(off>=d.buffer.duration-.01)off=0;
+  let off=d.startPos;if(off>=d.buffer.duration-.01)off=0;if(off<1&&d.trackId)histAdd({id:d.trackId,song:d.name});
   const s=ctx.createBufferSource();s.buffer=d.buffer;s.playbackRate.value=d.rate;s.connect(d.trim);d.braking=false;
   if(d.loopE&&off>=d.loopS&&off<d.loopE){s.loop=true;s.loopStart=d.loopS;s.loopEnd=d.loopE;d.looping=true}else{d.looping=false;if(d.loopE){d.loopE=0;d.loopBars=0;loopUI(d)}}
   
@@ -1354,7 +1377,7 @@ $('#stRec').onclick=()=>{
   const chunks=[];st.ext=mime.indexOf('mp4')>=0?'mp4':'webm';
   rec.ondataavailable=ev=>{if(ev.data&&ev.data.size)chunks.push(ev.data)};
   rec.onstop=()=>{rb.setAttribute('aria-pressed','false');rb.textContent='● GRABAR MEZCLA';
-    if(chunks.length){st.blob=new Blob(chunks,{type:mime});$('#stSave').disabled=!st.dl;status(st.dl?'Mezcla grabada. Toca GUARDAR MEZCLA.':'Mezcla grabada, pero guardar archivos solo funciona al abrir la página en claude.ai.')}};
+    if(chunks.length){st.blob=new Blob(chunks,{type:mime});$('#stSave').disabled=!st.dl;$('#stShare').disabled=false;status(st.dl?'Mezcla grabada. Toca GUARDAR MEZCLA.':'Mezcla grabada, pero guardar archivos solo funciona al abrir la página en claude.ai.')}};
   if(!stPlay(stStartT()))return;
   st.rec=rec;rec.start(1000);rb.setAttribute('aria-pressed','true');rb.textContent='■ PARAR GRABACIÓN';status('Grabando la mezcla completa…')};
 $('#stSave').onclick=async()=>{if(!st.blob||!st.dl)return;const nm=(stDeck().name||'karaoke').replace(/[\\/:*?"<>|]/g,'').slice(0,80);
@@ -1505,7 +1528,8 @@ function clEnd(){if(!cl.on)return;cl.on=false;$('#clEnd').disabled=true;$('#part
   const stars=Math.max(1,Math.ceil(score/20)),phrase=VERDICT.find(v=>score>=v[0])[1],name=$('#clName').value.trim()||'Sin nombre',d=liveDeck();
   const r=$('#clResult');r.hidden=false;r.innerHTML='<div class="st-k">CALIFICACIÓN</div><div class="cl-score"></div><div class="cl-stars"></div><div class="cl-ph"></div>';
   $('.cl-score',r).textContent=score;$('.cl-stars',r).textContent='★'.repeat(stars)+'☆'.repeat(5-stars);$('.cl-ph',r).textContent=`${name}: ${phrase}`;
-  rank.push({name,score,song:d?d.name:'',at:Date.now()});rank.sort((a,b)=>b.score-a.score);rank=rank.slice(0,10);
+  rank.push({name,score,song:d?d.name:'',at:Date.now()});
+  histAdd({id:turn&&turn.yt?'yt:'+turn.yt.vid:(d?d.trackId:null),song:(turn&&turn.song)||(d?d.name:''),who:name,score});rank.sort((a,b)=>b.score-a.score);rank=rank.slice(0,10);
   try{localStorage.setItem('cabina-rank',JSON.stringify(rank))}catch(_){}renderRank();
   $('#clFill').style.width='0%';status(`${name}: ${score} puntos`)}
 function renderRank(){const ol=$('#clRank');ol.innerHTML='';
@@ -1662,7 +1686,7 @@ async function readZip(blob){const tail=new DataView(await blob.slice(Math.max(0
   return out}
 async function exportBackup(full){if(!st.dl){status('Exportar el respaldo solo funciona al abrir la página en claude.ai.');return}
   status(full?'Preparando respaldo completo; puede tardar si tienes muchas canciones…':'Preparando respaldo ligero…');
-  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList};
+  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList,hist};
     for(const e of lib){if(e.demo)continue;const t={id:e.id,name:e.name,ext:e.ext,size:e.size,video:!!e.video,added:e.added};
       if(full&&e.blob){t.file='canciones/'+e.id+'.'+(e.ext||'bin');files.push({name:t.file,data:e.blob})}m.tracks.push(t)}
     for(const pd of pads)if(pd.buf&&pd.blob){const file='pads/pad'+pd.slot;m.pads.push({slot:pd.slot,name:pd.n,file});files.push({name:file,data:pd.blob})}
@@ -1682,6 +1706,7 @@ $('#importFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value=
     for(const l of m.lists||[])if(!lists.some(x=>x.id===l.id))lists.push(l);saveLists();
     if(!queue.length&&Array.isArray(m.queue)){queue=m.queue;saveQ();renderQ()}
     if(Array.isArray(m.rank)){rank=rank.concat(m.rank.filter(r=>!rank.some(x=>x.at===r.at))).sort((a,b)=>b.score-a.score).slice(0,10);try{localStorage.setItem('cabina-rank',JSON.stringify(rank))}catch(_){}renderRank()}
+    if(Array.isArray(m.hist)){for(const h of m.hist)if(h&&!hist.some(x=>x.at===h.at&&x.song===h.song))hist.push(h);hist.sort((a,b)=>a.at-b.at);saveHist();renderHist()}
     if(Array.isArray(m.yt)){for(const y of m.yt)if(y&&y.vid&&!ytList.some(x=>x.vid===y.vid))ytList.push(y);saveYt();renderYt()}
     if(Array.isArray(m.msgs)){for(const x of m.msgs)if(!msgs.includes(x))msgs.push(x);saveMsgs();renderMsgs()}
     try{for(const k in m.lyrics||{})if(k.startsWith('cabina-ly:')&&!localStorage.getItem(k))localStorage.setItem(k,m.lyrics[k])}catch(_){}
@@ -1800,6 +1825,33 @@ $('#ytList').onclick=async e=>{const b=e.target.closest('button');if(!b)return;c
     queue.push({name,yt:{vid:y.vid,title:y.title}});$('#qName').value='';saveQ();renderQ();status(`${name} quedó anotado con ${y.title}.`)}};
 renderYt();
 
+/* ---------- Historial ---------- */
+var hist=[];try{hist=JSON.parse(localStorage.getItem('cabina-hist')||'[]')||[]}catch(_){hist=[]}
+function saveHist(){try{localStorage.setItem('cabina-hist',JSON.stringify(hist))}catch(_){}}
+function histAdd(o){const now=Date.now();
+  if(!o.song){const h=hist[hist.length-1];if(h&&now-h.at<15*60000&&(o.who||o.score!=null)){if(o.who)h.who=o.who;if(o.score!=null)h.score=o.score;if(o.rec)h.rec=true;saveHist();renderHist()}return}
+  const le=lib.find(x=>x.id===o.id);if(le&&le.demo)return;
+  for(let i=hist.length-1;i>=0&&i>=hist.length-25;i--){const h=hist[i];if(((o.id&&h.id===o.id)||h.song===o.song)&&now-h.at<15*60000){if(!h.id&&o.id)h.id=o.id;if(o.who)h.who=o.who;if(o.score!=null)h.score=o.score;if(o.rec)h.rec=true;saveHist();renderHist();return}}
+  hist.push({at:now,id:o.id||null,song:o.song,who:o.who||'',score:o.score!=null?o.score:null,rec:!!o.rec});if(hist.length>500)hist.splice(0,hist.length-500);saveHist();renderHist()}
+function histPlay(h){if(h.id&&String(h.id).startsWith('yt:')){if(typeof ytShow==='function')ytShow({vid:h.id.slice(3),title:h.song},true);else status('Ábrelo desde Karaoke de YouTube.');return}
+  const e=lib.find(x=>x.id===h.id);if(!e){status('Esa canción ya no está en tu repertorio.');return}
+  if(mode==='player'){plPlayTrack(e);return}const L=decks.A.playing&&!decks.B.playing?'B':'A';
+  loadToDeck(L,e).then(ok=>{if(ok)status(`${e.name} lista en el deck ${L}: dale ▶`)})}
+function renderHist(){const ul=$('#hsToday'),top=$('#hsTop');if(!ul)return;ul.innerHTML='';top.innerHTML='';
+  const since=Date.now()-12*3600e3,today=hist.filter(h=>h.at>=since).slice(-30).reverse();
+  if(!today.length){const li=document.createElement('li');li.className='q-empty';li.textContent='Todavía no se canta nada hoy.';ul.appendChild(li)}
+  for(const h of today){const li=document.createElement('li');li.innerHTML='<span class="hs-t"></span><span class="q-t"><span class="nm"></span><small></small></span>';
+    $('.hs-t',li).textContent=new Date(h.at).toLocaleTimeString('es-MX',{hour:'2-digit',minute:'2-digit'});$('.nm',li).textContent=h.song;
+    $('small',li).textContent=[h.who,h.score!=null?h.score+' puntos':'',h.rec?'grabada':''].filter(Boolean).join(' · ');ul.appendChild(li)}
+  const cnt=new Map();for(const h of hist){const k=h.id||h.song;const c=cnt.get(k)||{n:0,h};c.n++;c.h=h;cnt.set(k,c)}
+  const best=[...cnt.values()].sort((a,b)=>b.n-a.n||b.h.at-a.h.at).slice(0,8);
+  if(!best.length){const li=document.createElement('li');li.className='q-empty';li.textContent='Aquí saldrán tus favoritas.';top.appendChild(li)}
+  best.forEach(({n,h})=>{const li=document.createElement('li');li.innerHTML='<span class="hs-n"></span><span class="q-t"></span><button class="mini">OTRA VEZ</button>';
+    $('.hs-n',li).textContent='×'+n;$('.q-t',li).textContent=h.song;$('button',li).onclick=()=>histPlay(h);top.appendChild(li)})}
+$('#hsClear').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.ask='1';b.textContent='¿BORRAR?';setTimeout(()=>{delete b.dataset.ask;b.textContent='BORRAR HISTORIAL'},3000);return}
+  delete b.dataset.ask;b.textContent='BORRAR HISTORIAL';hist=[];saveHist();renderHist();status('Historial borrado.')};
+renderHist();setInterval(renderHist,60000);
+
 /* ---------- Video de YouTube dentro de la página ---------- */
 var yt={p:null,vid:null,wait:[],loading:false};
 function ytApi(){return new Promise((res,rej)=>{if(window.YT&&YT.Player)return res(YT);yt.wait.push({res,rej});if(yt.loading)return;yt.loading=true;
@@ -1813,14 +1865,14 @@ async function ytShow(y,autoplay){if(!views[mode].yt){views[mode].yt=true;applyV
   else yt.p=new YT.Player('ytPlayer',{width:'100%',height:'100%',videoId:y.vid,host:'https://www.youtube-nocookie.com',
     playerVars:{playsinline:1,rel:0,autoplay:autoplay?1:0,origin:location.origin},events:{onStateChange:ytState,onError:ytErr}});
   stg.scrollIntoView({behavior:'smooth',block:'nearest'})}
-function ytState(e){if(e.data===1){for(const d of Object.values(decks))if(d.playing)pause(d);if(auto.on)autoStop();plPause();pvStop()}
+function ytState(e){if(e.data===1){try{const y=(ytList||[]).find(x=>x.vid===yt.vid);histAdd({id:'yt:'+yt.vid,song:y?y.title:'Video de YouTube'})}catch(_){}for(const d of Object.values(decks))if(d.playing)pause(d);if(auto.on)autoStop();plPause();pvStop()}
   if(e.data===0&&turn&&turn.yt&&turn.yt.vid===yt.vid)qFinish()}
 function ytErr(e){const c=e.data;status(c===101||c===150||c===153?'Este video no deja verse fuera de YouTube. Ábrelo con YOUTUBE ↗.':'YouTube no pudo reproducir este video. Prueba abrirlo con YOUTUBE ↗.')}
 $('#ytClose').onclick=()=>{try{if(yt.p&&yt.p.stopVideo)yt.p.stopVideo()}catch(_){}$('#ytStage').hidden=true};
 
 /* ---------- Modos y vista ---------- */
-const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib'],['dedic','Dedicatoria','.dedic']];
-const MODE_DEF={dj:['console','auto','fx','lib','dedic'],karaoke:['console','yt','lyr','queue','clap','msgs','studio','lib','dedic'],player:['player','lib','dedic']};
+const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['hist','Historial','.hist'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib'],['dedic','Dedicatoria','.dedic']];
+const MODE_DEF={dj:['console','auto','fx','lib','dedic'],karaoke:['console','yt','lyr','queue','clap','hist','msgs','studio','lib','dedic'],player:['player','lib','dedic']};
 const MODE_MIN={dj:['console','lib','dedic'],karaoke:['console','yt','queue','lib','dedic'],player:['player','lib','dedic']};
 const MODE_NAME={dj:'DJ',karaoke:'Karaoke',player:'Reproductor'};
 const defView=m=>{const v={};VIEW.forEach(([k])=>v[k]=MODE_DEF[m].includes(k));return v};
@@ -1888,7 +1940,7 @@ function plOrder(){const ids=plList().map(e=>e.id);
   pl.ids=ids;pl.idx=ids.indexOf(pl.id)}
 function plStopOthers(){ytPause();for(const d of Object.values(decks))if(d.playing)pause(d);if(auto.on)autoStop();stStop();pvStop()}
 function plPlayTrack(e){if(!e)return;const url=mediaURL(e);if(!url){status(`No se pudo abrir "${e.name}".`);return}
-  unlock();plGraph();plStopOthers();pl.id=e.id;pl.name=e.name;const vid=isVid(e);
+  unlock();plGraph();plStopOthers();pl.id=e.id;pl.name=e.name;histAdd({id:e.id,song:e.name});const vid=isVid(e);
   plVid.src=url;plVid.hidden=!vid;$('#plArt').hidden=vid;$('#plFs').hidden=!vid;$('#plTitle').textContent=e.name;
   plVid.play().catch(()=>status(`No se pudo reproducir "${e.name}".`));
   if(!pl.ids.includes(e.id))plOrder();else pl.idx=pl.ids.indexOf(e.id);renderList()}
@@ -2062,7 +2114,7 @@ function liveSong(){try{if(ytSrcOn()&&(ytPlaying()||(turn&&turn.yt))){const y=(y
   if(plIsPlaying())return pl.name;const d=liveDeck();if(d)return d.name;return turn?turn.song:'karaoke'}
 function liveUI(){liveBox.classList.toggle('on',live.on);$('#liveLbl').textContent=live.on?'■ PARAR '+fmtR((performance.now()-live.t0)/1000).slice(1):'GRABAR MI VOZ';
   $('#liveAfter').hidden=!live.blob||live.on;
-  document.querySelectorAll('.deck .recv').forEach(b=>{b.setAttribute('aria-pressed',String(live.on));b.textContent=live.on?'■ PARAR '+fmtR((performance.now()-live.t0)/1000).slice(1):'● GRABAR VOZ'});$('#liveMusic').disabled=live.on;$('#livePhones').disabled=live.on}
+  document.querySelectorAll('.deck .recv').forEach(b=>{b.setAttribute('aria-pressed',String(live.on));b.textContent=live.on?'■ PARAR '+fmtR((performance.now()-live.t0)/1000).slice(1):'● GRABAR VOZ'});$('#liveMusic').disabled=live.on;$('#liveFx').disabled=live.on;$('#livePhones').disabled=live.on}
 function livePanelShow(v){livePanel.hidden=!v;liveBox.classList.toggle('has',v&&mode!=='karaoke');$('#liveGear').setAttribute('aria-expanded',String(v))}
 $('#liveGear').onclick=()=>livePanelShow(livePanel.hidden);$('#liveClose').onclick=()=>livePanelShow(false);
 $('#liveEcho').oninput=e=>{const v=+e.target.value;$('#liveEchoO').textContent=Math.round(v*100)+'%';if(live.wet)setP(live.wet.gain,v)};
@@ -2079,21 +2131,22 @@ async function liveStart(){if(mic.rec){status('Termina primero la grabación del
   const vg=ctx.createGain();vg.gain.value=1.3;const rev=ctx.createConvolver();rev.buffer=conv.buffer;const wet=ctx.createGain();wet.gain.value=+$('#liveEcho').value;
   const mix=ctx.createGain(),out=ctx.createDynamicsCompressor();out.threshold.value=-3;out.ratio.value=12;out.attack.value=.003;out.release.value=.25;
   const dest=ctx.createMediaStreamDestination(),an=ctx.createAnalyser();an.fftSize=512;
-  src.connect(hpf);hpf.connect(cp);cp.connect(vg);vg.connect(mix);vg.connect(rev);rev.connect(wet);wet.connect(mix);src.connect(an);mix.connect(out);out.connect(dest);
+  const fx=voiceFx($('#liveFx').value),mon=ctx.createGain();mon.gain.value=$('#liveMon').checked&&hp?.9:0;mon.connect(ctx.destination);
+  src.connect(hpf);hpf.connect(cp);cp.connect(fx.input);fx.output.connect(vg);vg.connect(mix);vg.connect(rev);rev.connect(wet);wet.connect(mix);vg.connect(mon);wet.connect(mon);src.connect(an);mix.connect(out);out.connect(dest);
   let inLat=.02;try{const s=stream.getAudioTracks()[0].getSettings();if(s.latency)inLat=s.latency}catch(_){}
   let dly=null;if(withMusic){dly=ctx.createDelay(2);dly.delayTime.value=Math.min(1.5,(ctx.outputLatency||ctx.baseLatency||.02)+inLat);lim.connect(dly);dly.connect(mix)}
   let rec;try{rec=new MediaRecorder(dest.stream,{mimeType:mime,audioBitsPerSecond:192000})}catch(_){stream.getTracks().forEach(t=>t.stop());status('Este navegador no puede guardar grabaciones.');return}
   live.chunks=[];rec.ondataavailable=ev=>{if(ev.data&&ev.data.size)live.chunks.push(ev.data)};
-  rec.onstop=()=>{live.blob=new Blob(live.chunks,{type:mime});live.chunks=[];live.ext=mime.indexOf('mp4')>=0?'m4a':'webm';
+  rec.onstop=()=>{histAdd({song:live.name,who:($('#clName').value||'').trim(),rec:true});live.blob=new Blob(live.chunks,{type:mime});live.chunks=[];live.ext=mime.indexOf('mp4')>=0?'m4a':'webm';
     if(live.url)URL.revokeObjectURL(live.url);live.url=URL.createObjectURL(live.blob);liveUI();livePanelShow(true);
     $('#liveNote').textContent=`Grabación lista: ${live.name}. Escúchala, guárdala o descártala.`;status('Grabación lista.')};
-  Object.assign(live,{on:true,stream,src,an,rec,dly,wet,nodes:[src,hpf,cp,vg,rev,wet,mix,out,an],t0:performance.now(),name:liveSong(),blob:null});
+  Object.assign(live,{on:true,stream,src,an,rec,dly,wet,fx,mon,nodes:[src,hpf,cp,vg,rev,wet,mix,out,an,mon],t0:performance.now(),name:liveSong(),blob:null});
   rec.start(1000);liveUI();
   let ytOnly=false;try{ytOnly=ytSrcOn()&&ytPlaying()}catch(_){}
   status(ytOnly&&withMusic?'Grabando… YouTube no deja grabar su música: se guardará solo tu voz.':'Grabando tu voz con el karaoke…')}
 function liveStop(){if(!live.on)return;live.on=false;try{live.rec.stop()}catch(_){}
   live.stream.getTracks().forEach(t=>t.stop());if(live.dly){try{lim.disconnect(live.dly)}catch(_){}try{live.dly.disconnect()}catch(_){}}
-  live.nodes.forEach(n=>{try{n.disconnect()}catch(_){}});live.wet=null;$('#liveLvl').style.width='0%';liveUI()}
+  live.nodes.forEach(n=>{try{n.disconnect()}catch(_){}});if(live.fx)live.fx.stop();live.fx=null;live.mon=null;live.wet=null;$('#liveLvl').style.width='0%';liveUI()}
 $('#liveBtn').onclick=()=>{if(live.on)liveStop();else liveStart()};
 for(const d of Object.values(decks))$('.recv',d.root).onclick=()=>{if(live.on){liveStop();return}if(!d.buffer){status(`Carga un karaoke en el deck ${d.L} primero.`);return}if(!d.playing)play(d);liveStart()};
 $('#livePlay').onclick=e=>{if(!live.url)return;const b=e.currentTarget;
@@ -2105,6 +2158,35 @@ $('#liveDel').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.a
   delete b.dataset.ask;b.textContent='DESCARTAR';if(live.audio){live.audio.pause();live.audio=null}if(live.url)URL.revokeObjectURL(live.url);live.url=null;live.blob=null;
   $('#livePlay').textContent='▶ ESCUCHAR';$('#liveNote').textContent='Grabación descartada.';liveUI()};
 setInterval(()=>{if(!live.on)return;liveUI();const a=new Uint8Array(live.an.fftSize);live.an.getByteTimeDomainData(a);let m=0;for(const v of a)m=Math.max(m,Math.abs(v-128));$('#liveLvl').style.width=Math.min(100,m/1.1)+'%'},120);
+
+/* ---------- Efectos de voz, escucharte y compartir ---------- */
+let longIRbuf=null;
+function longIR(){if(longIRbuf)return longIRbuf;const sr=ctx.sampleRate,len=Math.floor(sr*3.6),b=ctx.createBuffer(2,len,sr);
+  for(let c=0;c<2;c++){const a=b.getChannelData(c);for(let i=0;i<len;i++)a[i]=(Math.random()*2-1)*Math.pow(1-i/len,2.4)}return longIRbuf=b}
+function voiceFx(kind){const i=ctx.createGain(),o=ctx.createGain(),nodes=[i,o],stops=[];
+  const bq=(t,f,q)=>{const x=ctx.createBiquadFilter();x.type=t;x.frequency.value=f;if(q!=null)x.Q.value=q;nodes.push(x);return x},G=v=>{const g=ctx.createGain();g.gain.value=v;nodes.push(g);return g};
+  if(kind==='estadio'){i.connect(o);const cv=ctx.createConvolver();cv.buffer=longIR();nodes.push(cv);const w=G(.55);i.connect(cv);cv.connect(w);w.connect(o);
+    const d=ctx.createDelay(1);d.delayTime.value=.13;nodes.push(d);const fb=G(.28);i.connect(d);d.connect(fb);fb.connect(d);d.connect(o)}
+  else if(kind==='radio'){const hp=bq('highpass',500),pk=bq('peaking',1500,1),lp=bq('lowpass',3200);pk.gain.value=6;const sh=ctx.createWaveShaper(),n=1024,cv=new Float32Array(n);
+    for(let k=0;k<n;k++){const x=k/(n-1)*2-1;cv[k]=Math.tanh(4*x)/Math.tanh(4)}sh.curve=cv;nodes.push(sh);const g=G(.7);i.connect(hp);hp.connect(pk);pk.connect(sh);sh.connect(lp);lp.connect(g);g.connect(o)}
+  else if(kind==='robot'){const rm=G(0),os=ctx.createOscillator();os.frequency.value=55;os.connect(rm.gain);os.start();stops.push(os);nodes.push(os);i.connect(rm);
+    const d=ctx.createDelay(.1);d.delayTime.value=.011;nodes.push(d);const fb=G(.5),g=G(1.4);rm.connect(d);d.connect(fb);fb.connect(d);rm.connect(g);d.connect(g);g.connect(o)}
+  else if(kind==='grave'||kind==='aguda'){const j=makeJungle();j.setPitch(Math.pow(2,(kind==='grave'?-5:6)/12));i.connect(j.input);j.output.connect(o);
+    j.nodes.forEach(n=>{nodes.push(n);if(n.stop)stops.push(n)})}
+  else i.connect(o);
+  return{input:i,output:o,stop(){stops.forEach(x=>{try{x.stop()}catch(_){}});nodes.forEach(x=>{try{x.disconnect()}catch(_){}})}}}
+const canShareFiles=!!(navigator.share&&navigator.canShare);
+async function shareBlob(blob,name){if(!blob)return;const base=String(name||'karaoke').normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^\w .()-]+/g,'-').slice(0,80);
+  const type=(blob.type||'').split(';')[0],ext=type==='audio/mp4'?'m4a':type==='audio/webm'?'weba':'wav';
+  let f=new File([blob],`${base}.${ext}`,{type:type||'audio/wav'});
+  try{if(!navigator.canShare({files:[f]})){status('Preparando el audio para compartir…');const buf=await decode(await blob.arrayBuffer());f=new File([wavBlob(buf)],`${base}.wav`,{type:'audio/wav'})}}catch(_){}
+  let ok=false;try{ok=navigator.canShare({files:[f]})}catch(_){}
+  if(!ok){status('Este aparato no deja compartir el archivo desde aquí. Usa GUARDAR y compártelo desde tus archivos.');return}
+  try{await navigator.share({files:[f],title:base,text:'Grabado en la Cabina Júpiter'});status('Listo.')}catch(e){if(!e||e.name!=='AbortError')status('No se pudo compartir. Usa GUARDAR.')}}
+if(!canShareFiles){$('#liveShare').hidden=true;$('#stShare').hidden=true}
+$('#liveShare').onclick=()=>shareBlob(live.blob,`${live.name||'karaoke'} - mi voz en vivo`);
+$('#stShare').onclick=()=>shareBlob(st.blob,`${stDeck().name||'karaoke'} - mi voz`);
+$('#liveMon').onchange=e=>{if(live.mon)setP(live.mon.gain,e.target.checked&&$('#livePhones').checked?.9:0);if(e.target.checked&&!$('#livePhones').checked)status('Para escucharte necesitas audífonos; con bocina se haría un chillido.')};
 
 /* ---------- Demos sintetizados ---------- */
 async function makeDemo({bpm,root,prog,wave}){
