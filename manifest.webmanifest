@@ -1,0 +1,24 @@
+{
+  "name": "Cabina Júpiter",
+  "short_name": "Cabina",
+  "description": "Consola de DJ, karaoke y reproductor. De Fel para Júpiter.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#05050b",
+  "theme_color": "#05050b",
+  "lang": "es-MX",
+  "categories": ["music", "entertainment"],
+  "icons": [
+    {"src": "icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"},
+    {"src": "icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"},
+    {"src": "icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable"}
+  ],
+  "shortcuts": [
+    {"name": "Modo karaoke", "url": "./?modo=karaoke", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]},
+    {"name": "Reproductor", "url": "./?modo=player", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]},
+    {"name": "Modo DJ", "url": "./?modo=dj", "icons": [{"src": "icon-192.png", "sizes": "192x192"}]}
+  ]
+}

@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta name="theme-color" content="#05050b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="favicon.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Cabina">
+<meta name="description" content="Consola de DJ, karaoke y reproductor. De Fel para Júpiter.">
 <style>:root{color-scheme:dark;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",sans-serif;font-size:14px}img{max-width:100%}</style>
 </head>
 <body>
@@ -342,13 +350,15 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
 .yt-bar{display:flex;flex-wrap:wrap;align-items:center;gap:8px}
 .yt-now{flex:1 1 200px;min-width:0;font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere}
+.upd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;flex-wrap:wrap;align-items:center;gap:10px;max-width:calc(100% - 32px);padding:10px 14px;border-radius:14px;border:1px solid var(--a);background:#140e10;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 24px rgba(246,180,74,.3);font-size:13px}
+#installBtn{border-color:var(--ok);color:var(--ok)}
 [hidden]{display:none!important}
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="jup" aria-hidden="true"></span><span class="logo">CABINA JÚPITER</span><span class="sub">Estación orbital · 2 decks · mezcladora</span></div>
-    <div class="top-r"><div id="status" class="status" role="status">Preparando audio…</div><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button></div>
+    <div class="top-r"><div id="status" class="status" role="status">Preparando audio…</div><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="installBtn" hidden>INSTALAR</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button></div>
   </header>
 
   <nav class="modebar" aria-label="Modo">
@@ -549,6 +559,7 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
   </section>
 
   <footer>De Fel para Júpiter · Hecho por @cybercadtm</footer>
+  <div class="upd" id="updBar" hidden role="status"><span>Hay una versión nueva de la Cabina.</span><button class="mini" id="updBtn">ACTUALIZAR</button><button class="mini" id="updLater">DESPUÉS</button></div>
 
   <div class="party" id="party" hidden role="dialog" aria-modal="true" aria-label="Modo fiesta">
     <canvas id="partyCv" aria-hidden="true"></canvas>
@@ -721,6 +732,15 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
         <li><b>RESPALDO LIGERO</b> guarda todo menos las canciones y videos.</li>
         <li>En el otro teléfono o computadora abre la Cabina y toca <b>IMPORTAR RESPALDO</b>. Lo que ya tenías no se borra; solo se suma lo nuevo.</li>
         <li>Para pasar tus canciones de la Cabina de Claude a esta página, haz un respaldo allá e impórtalo aquí.</li>
+      </ul>
+      <h3>Instalar como app</h3>
+      <ul>
+        <li><b>Android o computadora (Chrome, Edge):</b> toca <b>INSTALAR</b> arriba, o en el menú ⋮ del navegador elige "Instalar app" o "Agregar a pantalla de inicio".</li>
+        <li><b>iPhone o iPad:</b> abre la página en Safari, toca Compartir y luego "Agregar a inicio".</li>
+        <li>Instalada se abre en pantalla completa, con su ícono de Júpiter, y funciona sin internet: tus canciones, letras y pads ya viven en el teléfono. YouTube sí necesita internet.</li>
+        <li>Mantén presionado el ícono para entrar directo al modo Karaoke, DJ o Reproductor (en Android).</li>
+        <li>Cuando subas una versión nueva aparece un aviso con <b>ACTUALIZAR</b>. Nada se borra al actualizar.</li>
+        <li>La pantalla no se apaga mientras suena música o está el Modo fiesta, y el reproductor se controla desde la pantalla de bloqueo.</li>
       </ul>
       <h3>Consejos</h3>
       <ul>
@@ -1793,7 +1813,47 @@ function plTick(){if($('#plSec').hidden)return;const d=plVid.duration||0,on=plIs
 
 applyView();
 
-/* ---------- Demos sintetizados ---------- *//* ---------- Demos sintetizados ---------- */
+/* ---------- App instalable ---------- */
+const isApp=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+let installEvt=null;
+window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();installEvt=e;if(!isApp)$('#installBtn').hidden=false});
+$('#installBtn').onclick=async()=>{if(!installEvt)return;installEvt.prompt();try{const c=await installEvt.userChoice;if(c.outcome==='accepted')status('Cabina instalada.')}catch(_){}installEvt=null;$('#installBtn').hidden=true};
+window.addEventListener('appinstalled',()=>{$('#installBtn').hidden=true;status('Cabina instalada. Ya la tienes en tu pantalla de inicio.')});
+if('serviceWorker' in navigator&&(location.protocol==='https:'||location.hostname==='localhost')){
+  let waiting=null,reloading=false;const showUpd=w=>{waiting=w;$('#updBar').hidden=false};
+  navigator.serviceWorker.register('./sw.js').then(reg=>{
+    if(reg.waiting&&navigator.serviceWorker.controller)showUpd(reg.waiting);
+    reg.addEventListener('updatefound',()=>{const w=reg.installing;if(w)w.addEventListener('statechange',()=>{if(w.state==='installed'&&navigator.serviceWorker.controller)showUpd(w)})});
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')reg.update().catch(()=>{})})}).catch(()=>{});
+  navigator.serviceWorker.addEventListener('controllerchange',()=>{if(reloading)return;reloading=true;location.reload()});
+  $('#updBtn').onclick=()=>{if(waiting)waiting.postMessage('actualizar');$('#updBar').hidden=true};
+  $('#updLater').onclick=()=>{$('#updBar').hidden=true}}
+{const m=new URLSearchParams(location.search).get('modo');if(m&&MODE_DEF[m])setMode(m)}
+
+/* ---------- Espacio guardado: que el teléfono no borre tus canciones ---------- */
+async function storeInfo(){try{if(navigator.storage&&navigator.storage.estimate){const e=await navigator.storage.estimate(),p=navigator.storage.persisted?await navigator.storage.persisted():false;
+  $('#storeNote').textContent=`Guardado en este aparato: ${mb(e.usage||0)} de ${mb(e.quota||0)}${p?' · protegido':''}`}}catch(_){}}
+async function askPersist(){try{if(navigator.storage&&navigator.storage.persist&&!(await navigator.storage.persisted()))await navigator.storage.persist()}catch(_){}storeInfo()}
+setTimeout(storeInfo,1500);if(isApp)askPersist();
+$('#files').addEventListener('change',()=>setTimeout(askPersist,1500));
+
+/* ---------- Pantalla encendida mientras suena ---------- */
+let wake=null,wakeT=0;
+function wantWake(){return document.visibilityState==='visible'&&(!party.hidden||plIsPlaying()||Object.values(decks).some(d=>d.playing)||(typeof ytPlaying==='function'&&ytPlaying()))}
+async function wakeTick(){const now=performance.now();if(now-wakeT<1500)return;wakeT=now;
+  try{if(wantWake()&&!wake&&navigator.wakeLock){wake=await navigator.wakeLock.request('screen');wake.addEventListener('release',()=>{wake=null})}
+    else if(!wantWake()&&wake){const w=wake;wake=null;await w.release()}}catch(_){wake=null}}
+setInterval(wakeTick,2000);
+
+/* ---------- Controles en la pantalla de bloqueo (reproductor) ---------- */
+if('mediaSession' in navigator){const ms=navigator.mediaSession;
+  const meta=()=>{try{ms.metadata=new MediaMetadata({title:pl.name||'Cabina Júpiter',artist:'Cabina Júpiter',album:'De Fel para Júpiter',artwork:[{src:'icon-512.png',sizes:'512x512',type:'image/png'},{src:'icon-192.png',sizes:'192x192',type:'image/png'}]})}catch(_){}};
+  plVid.addEventListener('play',()=>{meta();ms.playbackState='playing'});plVid.addEventListener('pause',()=>{ms.playbackState='paused'});
+  const h=(a,f)=>{try{ms.setActionHandler(a,f)}catch(_){}};
+  h('play',()=>{unlock();plGraph();plVid.play().catch(()=>{})});h('pause',()=>plVid.pause());h('nexttrack',()=>plStep(1));
+  h('previoustrack',()=>{if(plVid.currentTime>3)plVid.currentTime=0;else plStep(-1)});h('seekto',d=>{if(d&&d.seekTime!=null)plVid.currentTime=d.seekTime})}
+
+/* ---------- Demos sintetizados ---------- */
 async function makeDemo({bpm,root,prog,wave}){
   const sr=44100,beat=60/bpm,beats=64,secs=beat*beats+.5;
   const oc=new (window.OfflineAudioContext||window.webkitOfflineAudioContext)(2,Math.floor(sr*secs),sr);
