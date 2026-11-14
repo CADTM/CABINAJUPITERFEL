@@ -1,5 +1,5 @@
 /* Cabina Júpiter: funciona sin internet y se actualiza al publicar una versión nueva */
-const VERSION='a0e038d096';
+const VERSION='082f6b7b90';
 const CACHE='cabina-'+VERSION, FONTS='cabina-fuentes';
 const SHELL=['./','./index.html','./manifest.webmanifest','./icon-192.png','./icon-512.png','./icon-maskable-512.png','./apple-touch-icon.png','./favicon.png'];
 self.addEventListener('install',e=>{e.waitUntil(caches.open(CACHE).then(c=>c.addAll(SHELL)))});

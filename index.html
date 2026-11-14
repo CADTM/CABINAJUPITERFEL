@@ -383,6 +383,10 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
 .live-meter{flex:1;height:8px;border-radius:4px;background:var(--well);overflow:hidden;box-shadow:inset 0 0 0 1px var(--line)}
 .live-meter i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--ok),var(--a),var(--cue))}
 .live-head{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.tx-r{flex-wrap:wrap;justify-content:flex-end}
+.deck .recv{border-color:var(--cue);color:var(--cue)}
+.deck .recv[aria-pressed=true]{background:var(--cue);color:#1a0505;box-shadow:0 0 14px rgba(255,91,69,.5)}
+.livebox.has{display:flex!important}
 [hidden]{display:none!important}
 </style>
 
@@ -785,6 +789,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
       <h3>Grabar mi voz en vivo</h3>
       <ul>
         <li>En modo Karaoke aparece abajo a la derecha el botón rojo <b>GRABAR MI VOZ</b>. Está visible también en el Modo fiesta.</li>
+        <li>Cada deck tiene además su botón <b>● GRABAR VOZ</b>, junto a KARAOKE. Si el deck está en pausa, lo pone a sonar y empieza a grabar al mismo tiempo. Funciona en cualquier modo.</li>
         <li>Ponte audífonos, dale play al karaoke (deck, reproductor o YouTube) y tócalo. Graba desde ese momento; toca <b>■ PARAR</b> al terminar.</li>
         <li>La grabación junta la música y tu voz ya sincronizadas, con un poco de eco. Al terminar puedes <b>ESCUCHAR</b>, <b>GUARDAR</b> o <b>DESCARTAR</b>.</li>
         <li><b>AJUST</b> abre las opciones: incluir o no la música, si usas audífonos, el eco y el nivel de tu micrófono.</li>
@@ -872,7 +877,7 @@ function deckHTML(L){return `
 <div class="pads">${[1,2,3,4].map(i=>`<button class="pad" data-i="${i-1}" aria-label="Hot cue ${i}">${i}</button>`).join('')}<button class="mini clr">BORRAR</button></div>
 <div class="drow"><span class="lbl">TONO</span><button class="mini kdn" aria-label="Bajar medio tono">−</button><output class="kout">0</output><button class="mini kup" aria-label="Subir medio tono">+</button><button class="mini k0">0</button><span class="sep"></span><button class="mini lp" data-b="1" aria-pressed="false">LOOP 1</button><button class="mini lp" data-b="2" aria-pressed="false">LOOP 2</button><button class="mini lp" data-b="4" aria-pressed="false">LOOP 4</button><span class="sep"></span><button class="mini echo" aria-pressed="false">ECO</button><button class="mini brake">FRENO</button><button class="mini rew">REBOBINAR</button></div>
 <div class="tx"><button class="cue">CUE</button><button class="play" aria-label="Reproducir">▶</button>
-  <div class="tx-r"><button class="mini kar" aria-pressed="false" title="Quita la voz principal">KARAOKE</button><button class="mini tap" title="Toca al ritmo para medir BPM">TAP</button><button class="mini sync" title="Iguala el tempo al otro deck">SYNC</button></div></div>`}
+  <div class="tx-r"><button class="mini recv" aria-pressed="false" title="Graba tu voz con lo que suena">● GRABAR VOZ</button><button class="mini kar" aria-pressed="false" title="Quita la voz principal">KARAOKE</button><button class="mini tap" title="Toca al ritmo para medir BPM">TAP</button><button class="mini sync" title="Iguala el tempo al otro deck">SYNC</button></div></div>`}
 
 function chHTML(L,n){const k=(id,lbl,min,max,step)=>`<label class="knob"><span>${lbl}</span><output id="${id}${L}o">0 dB</output><input type="range" id="${id}${L}" min="${min}" max="${max}" step="${step}" value="0"></label>`;
 return `<div class="ch" data-ch="${L}"><div class="ch-name">CH ${n} · ${L}</div>
@@ -2032,8 +2037,9 @@ const liveBox=$('#liveBox'),livePanel=$('#livePanel');
 function liveSong(){try{if(ytSrcOn()&&(ytPlaying()||(turn&&turn.yt))){const y=(ytList||[]).find(x=>x.vid===yt.vid);return y?y.title:'YouTube'}}catch(_){}
   if(plIsPlaying())return pl.name;const d=liveDeck();if(d)return d.name;return turn?turn.song:'karaoke'}
 function liveUI(){liveBox.classList.toggle('on',live.on);$('#liveLbl').textContent=live.on?'■ PARAR '+fmtR((performance.now()-live.t0)/1000).slice(1):'GRABAR MI VOZ';
-  $('#liveAfter').hidden=!live.blob||live.on;$('#liveMusic').disabled=live.on;$('#livePhones').disabled=live.on}
-function livePanelShow(v){livePanel.hidden=!v;$('#liveGear').setAttribute('aria-expanded',String(v))}
+  $('#liveAfter').hidden=!live.blob||live.on;
+  document.querySelectorAll('.deck .recv').forEach(b=>{b.setAttribute('aria-pressed',String(live.on));b.textContent=live.on?'■ PARAR '+fmtR((performance.now()-live.t0)/1000).slice(1):'● GRABAR VOZ'});$('#liveMusic').disabled=live.on;$('#livePhones').disabled=live.on}
+function livePanelShow(v){livePanel.hidden=!v;liveBox.classList.toggle('has',v&&mode!=='karaoke');$('#liveGear').setAttribute('aria-expanded',String(v))}
 $('#liveGear').onclick=()=>livePanelShow(livePanel.hidden);$('#liveClose').onclick=()=>livePanelShow(false);
 $('#liveEcho').oninput=e=>{const v=+e.target.value;$('#liveEchoO').textContent=Math.round(v*100)+'%';if(live.wet)setP(live.wet.gain,v)};
 $('#livePhones').checked=$('#stPhones').checked;
@@ -2065,6 +2071,7 @@ function liveStop(){if(!live.on)return;live.on=false;try{live.rec.stop()}catch(_
   live.stream.getTracks().forEach(t=>t.stop());if(live.dly){try{lim.disconnect(live.dly)}catch(_){}try{live.dly.disconnect()}catch(_){}}
   live.nodes.forEach(n=>{try{n.disconnect()}catch(_){}});live.wet=null;$('#liveLvl').style.width='0%';liveUI()}
 $('#liveBtn').onclick=()=>{if(live.on)liveStop();else liveStart()};
+for(const d of Object.values(decks))$('.recv',d.root).onclick=()=>{if(live.on){liveStop();return}if(!d.buffer){status(`Carga un karaoke en el deck ${d.L} primero.`);return}if(!d.playing)play(d);liveStart()};
 $('#livePlay').onclick=e=>{if(!live.url)return;const b=e.currentTarget;
   if(live.audio&&!live.audio.paused){live.audio.pause();b.textContent='▶ ESCUCHAR';return}
   live.audio=live.audio||new Audio(live.url);live.audio.onended=()=>{b.textContent='▶ ESCUCHAR'};live.audio.play().then(()=>{b.textContent='■ PARAR'}).catch(()=>{})};
