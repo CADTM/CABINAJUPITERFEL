@@ -55,6 +55,7 @@ body::after{content:"";position:fixed;right:-26vmax;bottom:-30vmax;width:62vmax;
 .deck{--c:var(--a);--hud:var(--c);display:grid;gap:10px;border-color:color-mix(in srgb,var(--c) 34%,var(--line));box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 30px color-mix(in srgb,var(--c) 10%,transparent),inset 0 1px 0 rgba(255,220,180,.07)}
 #deckB{--c:var(--b)}
 .d-head{display:flex;align-items:center;gap:10px;min-width:0}
+.d-head .ej{margin-left:auto;flex:none}
 .d-tag{font-family:var(--f-disp);font-weight:700;font-size:10.5px;letter-spacing:.16em;color:#120b06;background:var(--c);padding:4px 9px;border-radius:999px;flex:none;box-shadow:0 0 14px color-mix(in srgb,var(--c) 55%,transparent)}
 .tname{font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0}
 canvas{display:block}
@@ -352,13 +353,29 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 .yt-now{flex:1 1 200px;min-width:0;font-family:var(--f-mono);font-size:13px;overflow-wrap:anywhere}
 .upd{position:fixed;left:50%;transform:translateX(-50%);bottom:calc(16px + env(safe-area-inset-bottom,0px));z-index:80;display:flex;flex-wrap:wrap;align-items:center;gap:10px;max-width:calc(100% - 32px);padding:10px 14px;border-radius:14px;border:1px solid var(--a);background:#140e10;box-shadow:0 10px 30px rgba(0,0,0,.6),0 0 24px rgba(246,180,74,.3);font-size:13px}
 #installBtn{border-color:var(--ok);color:var(--ok)}
+body.tvmode{overflow:hidden}
+body.tvmode>*:not(#tv){display:none!important}
+#tv{position:fixed;inset:0;overflow:hidden;background:radial-gradient(ellipse at 50% 120%,var(--glow),transparent 60%),#05050b;color:var(--fg);display:grid;grid-template-rows:auto 1fr auto auto;padding:max(16px,env(safe-area-inset-top,0px)) max(24px,env(safe-area-inset-right,0px)) max(16px,env(safe-area-inset-bottom,0px)) max(24px,env(safe-area-inset-left,0px))}
+#tv .tv-bg{position:absolute;inset:0;display:grid;place-items:center;pointer-events:none}
+#tv .tv-jup{position:relative;width:min(46vh,46vw);height:min(46vh,46vw);box-shadow:0 0 90px color-mix(in srgb,var(--a) 50%,transparent);animation:plspin 90s linear infinite}
+#tv.hasmedia .tv-bg{display:none}
+#tvVid,#tvYt{position:absolute;inset:0;width:100%;height:100%;object-fit:contain;background:#000}
+#tvYt iframe,#tvYt #tvYtP{width:100%;height:100%;border:0;pointer-events:none}
+.tv-top,.tv-ly,.tv-ded{position:relative;z-index:2}
+.tv-top{display:flex;justify-content:space-between;align-items:center;gap:12px;font-family:var(--f-disp);font-size:clamp(14px,2.2vw,28px);letter-spacing:.06em;text-shadow:0 2px 10px #000}
+.tv-ly{grid-row:3;text-align:center;display:grid;gap:.4em;padding:2vh 0;text-shadow:0 3px 18px #000,0 0 4px #000}
+.tv-ly .ly-cur{font-size:clamp(28px,6.5vw,96px);font-weight:700;line-height:1.15;filter:drop-shadow(0 3px 12px rgba(0,0,0,.95))}
+.tv-ly .ly-prev,.tv-ly .ly-next{font-size:clamp(16px,3vw,42px);color:rgba(243,231,211,.72)}
+#tv.hasmedia .tv-ly{background:linear-gradient(transparent,rgba(0,0,0,.7) 30%);margin:0 -24px;padding:3vh 24px 1vh}
+.tv-ded{grid-row:4;text-align:center;font-family:var(--f-disp);font-size:clamp(10px,1.2vw,16px);letter-spacing:.3em;color:var(--muted)}
+.tv-wait{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);z-index:3;padding:14px 20px;border-radius:12px;background:rgba(0,0,0,.65);font-size:16px;text-align:center;max-width:90%}
 [hidden]{display:none!important}
 </style>
 
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="jup" aria-hidden="true"></span><span class="logo">CABINA JÚPITER</span><span class="sub">Estación orbital · 2 decks · mezcladora</span></div>
-    <div class="top-r"><div id="status" class="status" role="status">Preparando audio…</div><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="installBtn" hidden>INSTALAR</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button></div>
+    <div class="top-r"><div id="status" class="status" role="status">Preparando audio…</div><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="tvBtn">PANTALLA TV</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="installBtn" hidden>INSTALAR</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button></div>
   </header>
 
   <nav class="modebar" aria-label="Modo">
@@ -529,7 +546,8 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
       <div class="st-btns"><button class="mini" data-n="-1">−1 s</button><button class="mini" data-n="-0.1">−0.1</button><button class="mini" data-n="0.1">+0.1</button><button class="mini" data-n="1">+1 s</button><button class="mini" id="stUseDeck">POSICIÓN DEL DECK</button><button class="mini" id="stAuto">ALINEAR AUTO</button></div>
     </div>
     <div class="st-tx"><button class="tog" id="stPlay">▶ ESCUCHAR</button><button class="tog rec" id="stRec" aria-pressed="false">● GRABAR MEZCLA</button><button class="tog" id="stSave" disabled>GUARDAR MEZCLA</button><span class="st-pos" id="stPos">0:00.0</span></div>
-    <p class="st-note" id="stNote">Esta página no puede usar el micrófono directamente. Graba tu voz con la grabadora del teléfono mientras suena el karaoke y súbela aquí; en Android, el botón abre la grabadora.</p>
+    <div class="st-tx"><button class="tog rec" id="stMic" aria-pressed="false">● GRABAR CON MICRÓFONO</button><label class="st-chk"><input type="checkbox" id="stPhones" checked> Uso audífonos</label></div>
+    <p class="st-note" id="stNote">Ponte audífonos, elige la pista y toca GRABAR CON MICRÓFONO: la canción empieza y tu voz queda sincronizada sola. También puedes subir una grabación hecha aparte.</p>
   </section>
 
   <section class="lib" aria-label="Repertorio">
@@ -606,7 +624,9 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
         <li><b>Plato-planeta</b>: arrástralo en círculo para adelantar o regresar la pista. La luna marca cada vuelta.</li>
         <li><b>Formas de onda</b>: la grande muestra 6 segundos alrededor del cabezal. Toca la barra delgada para saltar a cualquier parte.</li>
         <li><b>PITCH</b>: sube o baja la velocidad hasta ±8%. <b>0%</b> la regresa a normal.</li>
-        <li><b>TAP</b>: tócalo 4 veces o más al ritmo para medir el BPM. <b>SYNC</b> iguala el tempo con el otro deck; los dos necesitan BPM.</li>
+        <li><b>BPM automático</b>: al cargar una canción la Cabina detecta su tempo y dibuja la rejilla de compases. La segunda vez lo recuerda y carga más rápido.</li>
+        <li><b>TAP</b>: si el BPM detectado no cuadra, tócalo 4 veces o más al ritmo para corregirlo. <b>SYNC</b> iguala el tempo con el otro deck.</li>
+        <li><b>SACAR</b> (junto al nombre) quita la canción del deck y libera la memoria que ocupaba.</li>
         <li><b>KARAOKE</b>: quita la voz de ese deck (punto 5).</li>
       </ul>
       <h3>Tono, loops y efectos</h3>
@@ -714,7 +734,9 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
       <h3>Estudio de voz</h3>
       <ol>
         <li>Carga el karaoke en un deck y elígelo en <b>PISTA</b>.</li>
-        <li>Graba tu voz con la grabadora del teléfono mientras suena el karaoke. En Android, <b>Grabar o subir voz</b> abre la grabadora; en iPhone graba con Notas de voz y luego súbela.</li>
+        <li>Ponte audífonos y toca <b>GRABAR CON MICRÓFONO</b>. La primera vez el navegador pide permiso para el micrófono. La canción empieza desde el principio; canta y toca <b>PARAR GRABACIÓN</b> cuando termines (o deja que acabe la canción). Tu voz queda sincronizada sola.</li>
+        <li>Sin audífonos, desmarca "Uso audífonos": el teléfono intentará no grabar la música, aunque la voz puede sonar más apagada.</li>
+        <li>También puedes subir una grabación hecha aparte con <b>Grabar o subir voz</b>.</li>
         <li>Ajusta <b>LA VOZ ENTRA EN</b> con ±1 s y ±0.1, con <b>POSICIÓN DEL DECK</b>, o con <b>ALINEAR AUTO</b>. El automático funciona cuando en tu grabación se alcanza a oír la música; si grabaste con audífonos, ajústalo a mano.</li>
         <li>Mueve <b>PISTA</b>, <b>VOZ</b> y <b>ECO ESPACIAL</b> y dale <b>ESCUCHAR</b>. Toca la línea de tiempo para escuchar desde otro punto.</li>
         <li><b>GRABAR MEZCLA</b> la reproduce completa y la graba. Al terminar, <b>GUARDAR MEZCLA</b> te da el archivo de audio.</li>
@@ -733,7 +755,15 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
         <li>En el otro teléfono o computadora abre la Cabina y toca <b>IMPORTAR RESPALDO</b>. Lo que ya tenías no se borra; solo se suma lo nuevo.</li>
         <li>Para pasar tus canciones de la Cabina de Claude a esta página, haz un respaldo allá e impórtalo aquí.</li>
       </ul>
-      <h3>Instalar como app</h3>
+      <h3>Pantalla para TV</h3>
+      <ul>
+        <li><b>PANTALLA TV</b> abre una segunda ventana solo con la letra en grande, quién canta y el video (de un deck, del reproductor o de YouTube). Tú sigues controlando todo desde la ventana principal.</li>
+        <li>En computadora, arrastra esa ventana a la TV o al proyector (cable HDMI o pantalla extendida) y toca <b>PANTALLA COMPLETA</b>. En Chrome también puedes transmitirla con "Transmitir pestaña".</li>
+        <li>El sonido sale de la ventana principal; la de la TV va en silencio. Deja abiertas las dos.</li>
+        <li>Si tu navegador bloquea la ventana, permite las ventanas emergentes para esta página.</li>
+      </ul>
+      
+<h3>Instalar como app</h3>
       <ul>
         <li><b>Android o computadora (Chrome, Edge):</b> toca <b>INSTALAR</b> arriba, o en el menú ⋮ del navegador elige "Instalar app" o "Agregar a pantalla de inicio".</li>
         <li><b>iPhone o iPad:</b> abre la página en Safari, toca Compartir y luego "Agregar a inicio".</li>
@@ -747,7 +777,9 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
         <li>En iPhone, apaga el switch de silencio si no se oye nada.</li>
         <li>Si un karaoke se oye delgado o raro, apaga <b>KARAOKE</b> en ese deck.</li>
         <li>Los videos bajados de YouTube traen audio comprimido; una versión de mejor calidad suena mejor.</li>
-        <li>Los videos largos ocupan mucha memoria. Si el navegador se pone lento, quita los que no uses.</li>
+        <li>Una canción cargada en un deck ocupa unos 10 MB de memoria por minuto. Si el teléfono va lento, usa <b>SACAR</b> en el deck que no estés usando, o el modo Reproductor, que casi no ocupa memoria.</li>
+        <li>Para videos, MP4 en 720p es lo más ligero y se ve bien.</li>
+        <li>Las canciones demo solo aparecen mientras no tengas canciones tuyas, para que la Cabina abra más rápido.</li>
       </ul>
       <p class="sign">Cabina Júpiter · De Fel para Júpiter · @cybercadtm</p>
     </div>
@@ -757,6 +789,7 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 <script>
 (()=>{
 const $=(s,r=document)=>r.querySelector(s);
+if(new URLSearchParams(location.search).has('pantalla')){tvMain();return}
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const C={a:css('--a'),b:css('--b'),cue:css('--cue'),ok:css('--ok'),fg:css('--fg'),muted:css('--muted'),line:css('--line'),well:css('--well'),bg:css('--bg')};
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
@@ -789,7 +822,7 @@ function decode(ab){return new Promise((res,rej)=>{const p=ctx.decodeAudioData(a
 
 /* ---------- Decks ---------- */
 function deckHTML(L){return `
-<div class="d-head"><span class="d-tag">DECK ${L} · ${L==='A'?'IO':'EUROPA'}</span><div class="tname">Sin pista</div></div>
+<div class="d-head"><span class="d-tag">DECK ${L} · ${L==='A'?'IO':'EUROPA'}</span><div class="tname">Sin pista</div><button class="mini ej" aria-label="Sacar la canción del deck">SACAR</button></div>
 <div class="vidbox" hidden><video class="vid" playsinline muted preload="auto"></video><button class="mini fs">PANTALLA</button></div>
 <canvas class="zoom" aria-label="Forma de onda cercana"></canvas>
 <canvas class="over" aria-label="Forma de onda completa, toca para saltar"></canvas>
@@ -852,7 +885,7 @@ function loopUI(d){d.root.querySelectorAll('.lp').forEach(b=>b.setAttribute('ari
 function setLoop(d,bars){if(!d.buffer)return;
   if(d.loopE){const p=pos(d);if(d.playing){d.startPos=p;d.startTime=ctx.currentTime;if(d.src)d.src.loop=false}else d.startPos=p;
     const same=d.loopBars===bars;d.loopE=0;d.loopBars=0;d.looping=false;loopUI(d);if(same)return}
-  const beat=d.bpm?60/d.bpm:.5;let S=pos(d);if(d.grid&&d.bpm)S=Math.floor(S/beat+.0001)*beat;
+  const beat=d.bpm?60/d.bpm:.5;let S=pos(d);if(d.grid&&d.bpm){const bo=d.bOff||0;S=Math.floor((S-bo)/beat+.0001)*beat+bo;if(S<0)S+=beat}
   d.loopS=S;d.loopE=Math.min(d.buffer.duration,S+bars*4*beat);d.loopBars=bars;
   if(d.playing&&d.src){d.src.loopStart=d.loopS;d.src.loopEnd=d.loopE;d.src.loop=true;d.looping=true}
   loopUI(d);status(`Deck ${d.L}: loop de ${bars} ${bars===1?'compás':'compases'}${d.bpm?'':' (2 s cada uno; usa TAP para medir el BPM)'}`)}
@@ -877,7 +910,7 @@ function play(d){
   showPlay(d);
 }
 function pause(d){d.startPos=pos(d);stopSrc(d);d.playing=false;showPlay(d)}
-function seek(d,t){if(!d.buffer)return;const was=d.playing;if(was){stopSrc(d);d.playing=false}d.startPos=clamp(t,0,d.buffer.duration);if(was)play(d)}
+function seek(d,t){if(!d.buffer)return;d.poke=performance.now();const was=d.playing;if(was){stopSrc(d);d.playing=false}d.startPos=clamp(t,0,d.buffer.duration);if(was)play(d)}
 function setRate(d,r){if(d.playing){d.startPos=pos(d);d.startTime=ctx.currentTime}d.rate=r;if(d.src)d.src.playbackRate.value=r}
 function isVid(e){return !!e.blob&&(!!e.video||(e.blob.type||'').startsWith('video/')||/^(mp4|m4v|mov|mkv)$/i.test(e.ext||''))}
 function vidSync(d,force){if(!d.hasVid)return;const v=d.el.vid;if(v.readyState<1)return;const t=pos(d);
@@ -896,6 +929,23 @@ function computePeaks(buf){
     p[i]=m;if(m>mx)mx=m}
   if(mx>0)for(let i=0;i<n;i++)p[i]/=mx;return p}
 
+function detectBPM(buf){const sr=buf.sampleRate,hop=Math.round(sr/200),a=buf.getChannelData(0),b=buf.numberOfChannels>1?buf.getChannelData(1):null;
+  let s0=0,s1=buf.length;if(buf.duration>70){const mid=buf.length/2,half=sr*30;s0=Math.max(0,Math.floor(mid-half));s1=Math.min(buf.length,Math.floor(mid+half))}
+  const n=Math.floor((s1-s0)/hop);if(n<600)return null;const e=new Float32Array(n),k=Math.exp(-2*Math.PI*150/sr);let lp=0;
+  for(let i=0;i<n;i++){let sum=0;const st=s0+i*hop;for(let j=st;j<st+hop;j++){const x=b?(a[j]+b[j])*.5:a[j];lp=lp*k+x*(1-k);if((j&1)===0)sum+=lp*lp+x*x*.12}e[i]=Math.log(1+sum*50)}
+  const o=new Float32Array(n);let m=0;for(let i=1;i<n;i++){o[i]=Math.max(0,e[i]-e[i-1]);m+=o[i]}m/=n;for(let i=0;i<n;i++)o[i]-=m;
+  const lo=Math.floor(12000/180),hi=Math.ceil(12000/70),top=2*hi+2,ac=new Float32Array(top+1);
+  for(let L=lo-1;L<=top;L++){let sum=0;for(let i=L;i<n;i++)sum+=o[i]*o[i-L];ac[L]=sum/(n-L)}
+  let best=-Infinity,bl=0;for(let L=lo;L<=hi;L++){const sc=ac[L]+.5*ac[2*L];if(sc>best){best=sc;bl=L}}
+  if(!(best>0))return null;const y0=ac[bl-1],y1=ac[bl],y2=ac[bl+1],den=y0-2*y1+y2,Lr=bl+(Math.abs(den)>1e-12?.5*(y0-y2)/den:0);
+  let bpm=12000/Lr;while(bpm<80)bpm*=2;while(bpm>170)bpm/=2;bpm=Math.round(bpm*10)/10;
+  const P=12000/bpm;let bp=-Infinity,ph=0;for(let f=0;f<P;f++){let sum=0;for(let x=f;x<n;x+=P)sum+=o[Math.round(x)]||0;if(sum>bp){bp=sum;ph=f}}
+  const beat=60/bpm;return{bpm,off:((s0/sr+ph/200)%beat+beat)%beat}}
+function bpmFor(d,e,buf){let c=null;try{c=JSON.parse(localStorage.getItem('cabina-bpm:'+e.id)||'null')}catch(_){}
+  if(c&&c.bpm){d.bpm=c.bpm;d.bOff=c.off||0;d.grid=true;return}
+  setTimeout(()=>{if(d.trackId!==e.id||d.bpm)return;const r=detectBPM(buf);if(!r||d.trackId!==e.id||d.bpm)return;
+    d.bpm=r.bpm;d.bOff=r.off;d.grid=true;d.poke=performance.now();try{localStorage.setItem('cabina-bpm:'+e.id,JSON.stringify(r))}catch(_){}
+    status(`Deck ${d.L}: ${r.bpm.toFixed(1)} BPM detectado. Si no cuadra, corrígelo con TAP.`)},60)}
 async function loadToDeck(L,e){
   const d=decks[L];status(`Cargando "${e.name}" en el deck ${L}…`);
   let buf=e.buffer;
@@ -903,7 +953,7 @@ async function loadToDeck(L,e){
   catch(err){status(`No se pudo leer "${e.name}". Prueba con MP3, WAV o MP4.`);return false}
   pause(d);d.buffer=buf;d.name=e.name;d.trackId=e.id;d.startPos=0;d.cue=0;d.hot=[null,null,null,null];
   d.el.pads.forEach(p=>p.classList.remove('set'));
-  d.peaks=computePeaks(buf);d.off=null;d.bpm=e.bpm||null;d.grid=!!e.bpm;d.taps=[];d.loopE=0;d.loopBars=0;d.looping=false;d.braking=false;loopUI(d);
+  d.peaks=computePeaks(buf);d.off=null;d.bpm=e.bpm||null;d.grid=!!e.bpm;d.bOff=0;d.taps=[];d.loopE=0;d.loopBars=0;d.looping=false;d.braking=false;loopUI(d);
   d.el.name.textContent=e.name;
   if(d.vidURL){URL.revokeObjectURL(d.vidURL);d.vidURL=null}
   const v=d.el.vid;d.hasVid=isVid(e);
@@ -912,7 +962,9 @@ async function loadToDeck(L,e){
     v.onerror=()=>{if(d.hasVid){d.hasVid=false;d.el.vbox.hidden=true;status('Este navegador no pudo mostrar el video; el audio sí suena.')}};
     v.src=d.vidURL;d.el.vbox.hidden=false}
   else{d.el.vbox.hidden=true;v.removeAttribute('src');try{v.load()}catch(_){}}
-  status(d.kar&&d.hasVid?`Deck ${L}: ${e.name}. Si ya es karaoke, apaga KARAOKE para que suene completo.`:`Deck ${L}: ${e.name}`);renderList();return true;
+  status(d.kar&&d.hasVid?`Deck ${L}: ${e.name}. Si ya es karaoke, apaga KARAOKE para que suene completo.`:`Deck ${L}: ${e.name}`);renderList();d.poke=performance.now();
+  const memMB=buf.length*buf.numberOfChannels*4/1048576;if(memMB>150)status(`Deck ${L}: ${e.name} ocupa unos ${Math.round(memMB)} MB de memoria. Si el teléfono va lento, saca la canción del otro deck con SACAR.`);
+  if(!e.bpm)bpmFor(d,e,buf);return true;
 }
 
 for(const d of Object.values(decks)){
@@ -929,6 +981,11 @@ for(const d of Object.values(decks)){
     $('.echo',r).onclick=e=>{d.echo=!d.echo;e.currentTarget.setAttribute('aria-pressed',String(d.echo));
       if(d.echo)d.dl.delayTime.setTargetAtTime(d.bpm?Math.min(1.5,45/(d.bpm*d.rate)):.375,ctx.currentTime,.01);setP(d.es.gain,d.echo?.55:0)};
     $('.brake',r).onclick=()=>brake(d);$('.rew',r).onclick=()=>rewind(d)}
+  d.root.addEventListener('pointerdown',()=>d.poke=performance.now(),{passive:true});d.root.addEventListener('pointermove',()=>d.poke=performance.now(),{passive:true});d.root.addEventListener('input',()=>d.poke=performance.now());
+  $('.ej',r).onclick=()=>{if(!d.buffer)return;const nm=d.name;pause(d);d.buffer=null;d.peaks=null;d.off=null;d.name='';d.trackId=null;d.bpm=null;d.grid=false;d.cue=0;d.startPos=0;
+    d.hot=[null,null,null,null];d.el.pads.forEach(p=>p.classList.remove('set'));d.loopE=0;d.loopBars=0;loopUI(d);
+    if(d.vidURL){d.vidURL=null}d.hasVid=false;d.el.vbox.hidden=true;d.el.vid.removeAttribute('src');try{d.el.vid.load()}catch(_){}
+    d.el.name.textContent='Sin pista';d.poke=performance.now();renderList();status(`Sacaste "${nm}" del deck ${d.L}; ya no ocupa memoria.`)};
   d.el.kar.onclick=()=>{d.kar=!d.kar;d.el.kar.setAttribute('aria-pressed',String(d.kar));setP(d.dry.gain,d.kar?0:1);setP(d.karG.gain,d.kar?1:0);status(d.kar?`Deck ${d.L}: modo karaoke, voz reducida. Si la pista ya es karaoke, apágalo.`:`Deck ${d.L}: voz normal`)};
   d.el.fs.onclick=()=>{const v=d.el.vid,no=()=>status('La pantalla completa no está disponible aquí.');try{if(v.requestFullscreen){const pr=v.requestFullscreen();if(pr&&pr.catch)pr.catch(no)}else if(v.webkitEnterFullscreen)v.webkitEnterFullscreen();else no()}catch(_){no()}};
   $('.clr',r).onclick=()=>{d.hot=[null,null,null,null];d.el.pads.forEach(p=>p.classList.remove('set'))};
@@ -977,7 +1034,7 @@ function drawZoom(d,t){
   g.fillStyle=C.well;g.fillRect(0,0,w,h);
   if(!d.buffer){g.fillStyle=C.line;g.fillRect(0,h/2,w,1);return}
   const W=6,t0=t-W/2,X=s=>((s-t0)/W)*w;
-  if(d.grid&&d.bpm){const bt=60/d.bpm;for(let s=Math.ceil(t0/bt)*bt;s<t0+W;s+=bt){const n=Math.round(s/bt);g.fillStyle=n%4===0?'rgba(236,230,218,.28)':'rgba(236,230,218,.09)';g.fillRect(Math.round(X(s)),0,k,h)}}
+  if(d.grid&&d.bpm){const bt=60/d.bpm,bo=d.bOff||0;for(let s=Math.ceil((t0-bo)/bt)*bt+bo;s<t0+W;s+=bt){const n=Math.round((s-bo)/bt);g.fillStyle=n%4===0?'rgba(236,230,218,.28)':'rgba(236,230,218,.09)';g.fillRect(Math.round(X(s)),0,k,h)}}
   const p=d.peaks,step=Math.max(1,Math.round(k*1.5));
   for(let x=0;x<w;x+=step){const s=t0+x/w*W,i=Math.floor(s*100);if(i<0||i>=p.length)continue;
     const bh=Math.max(k,p[i]*h*.9);g.fillStyle=s<t?'rgba(236,230,218,.32)':d.color;g.fillRect(x,(h-bh)/2,step*.75,bh)}
@@ -1048,14 +1105,14 @@ function drawVU(d){
 }
 function setTxt(el,v){if(el.textContent!==v)el.textContent=v}
 let last=performance.now();
-var consoleOn=true;
-function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;
+var consoleOn=true,frameN=0;
+function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;frameN++;
   for(const d of Object.values(decks)){
     if(d.rewinding)d.angle-=dt*(100/3/60)*Math.PI*2*3.2;else if(d.playing)d.angle+=dt*(100/3/60)*Math.PI*2*d.rate*(d.braking?Math.max(0,1-(ctx.currentTime-d.startTime)/1.2):1);
     const t=pos(d);vidSync(d,false);
     setTxt(d.el.el,fmt(t));setTxt(d.el.rem,fmtR(d.buffer?d.buffer.duration-t:0));
     setTxt(d.el.bpm,d.bpm?(d.bpm*d.rate).toFixed(1)+' BPM':'— BPM');
-    if(consoleOn){drawZoom(d,t);drawOver(d,t);drawPlatter(d);drawVU(d)}
+    if(consoleOn&&(d.playing||d.rewinding||now-(d.poke||0)<1000||frameN%6===0)){drawZoom(d,t);drawOver(d,t);drawPlatter(d);drawVU(d)}
   }
   autoTick();if(!$('.studio').hidden)studioTick();lyTick();clTick(dt);qTick();sleepTick();plTick();pvTick();if(!party.hidden)drawParty(dt);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
@@ -1069,7 +1126,7 @@ const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const mb=n=>(n/1048576).toFixed(1)+' MB';
 function renderList(){renderLists();renderQSongs();const lst=curList();
   const qq=norm(q.value.trim());let items=lib.filter(e=>!qq||norm(e.name).includes(qq));if(lst&&!listEdit)items=items.filter(e=>lst.ids.includes(e.id));
-  const mine=lib.filter(e=>!e.demo).length;$('#libCount').textContent=`${mine} ${mine===1?'canción tuya':'canciones tuyas'} · 2 demos`;
+  const mine=lib.filter(e=>!e.demo).length;const dm=lib.filter(e=>e.demo).length;$('#libCount').textContent=`${mine} ${mine===1?'canción tuya':'canciones tuyas'}${dm?` · ${dm} demos`:''}`;
   list.innerHTML='';
   if(!items.length){const li=document.createElement('li');li.className='empty';li.textContent=qq?'Nada coincide con tu búsqueda.':lst?'Esta lista está vacía. Toca EDITAR LISTA para agregar canciones.':'Carga tus canciones con el botón de arriba.';list.appendChild(li);return}
   for(const e of items){
@@ -1275,7 +1332,7 @@ function studioTick(){const d=stDeck();
   setTxt($('#stStartO'),(st.vStart<0?'-':'')+fmt(Math.abs(st.vStart)));
   const p=stPos();setTxt($('#stPos'),fmt(Math.max(0,p))+' / '+fmt(stEnd()));
   if(st.playing&&p>=stEnd()+.4){stStop();st.from=stStartT()}
-  drawStudio(p)}
+  if(st.playing||frameN%6===0)drawStudio(p)}
 
 /* ---------- Pads de efectos (sonidos del usuario) ---------- */
 const fxBus=ctx.createGain();fxBus.gain.value=.72;fxBus.connect(stLim);
@@ -1371,7 +1428,7 @@ $('#lyOffDn').onclick=()=>lyOff(-.1);$('#lyOffUp').onclick=()=>lyOff(.1);
 $('#lyDeck').onchange=()=>{if(!ly.mark)ly.key=null};
 for(const v of [$('#lyView'),$('#partyLy')])v.addEventListener('pointerdown',e=>{if(!ly.mark)return;e.preventDefault();lyTap()});
 document.addEventListener('keydown',e=>{if(ly.mark&&e.code==='Space'&&!e.repeat&&!typing(e.target)&&man.hidden){e.preventDefault();lyTap()}});
-function lyTick(){if($('.lyr').hidden&&party.hidden&&!ly.mark)return;
+function lyTick(){if($('.lyr').hidden&&party.hidden&&!ly.mark&&!tvOn)return;
   const s=ly.mark?ly.src:resolveSrc();
   if(!ly.mark){if(s.kind==='deck'&&s.d.playing){ly.last=s.L;ly.lastKind='deck'}else if(s.kind==='yt'&&ytPlaying())ly.lastKind='yt'}
   const ready=srcReady(s),key=ready?srcKey(s):undefined;if(!ly.mark&&key!==ly.key)lyLoad(key);
@@ -1853,6 +1910,86 @@ if('mediaSession' in navigator){const ms=navigator.mediaSession;
   h('play',()=>{unlock();plGraph();plVid.play().catch(()=>{})});h('pause',()=>plVid.pause());h('nexttrack',()=>plStep(1));
   h('previoustrack',()=>{if(plVid.currentTime>3)plVid.currentTime=0;else plStep(-1)});h('seekto',d=>{if(d&&d.seekTime!=null)plVid.currentTime=d.seekTime})}
 
+/* ---------- Grabar la voz con el micrófono ---------- */
+const mic={rec:false,chunks:[]};let micModule=false;
+const REC_WORKLET=`class R extends AudioWorkletProcessor{constructor(){super();this.on=false;this.at=0;this.buf=new Float32Array(8192);this.n=0;
+this.port.onmessage=e=>{const d=e.data;if(d.cmd==='start'){this.at=d.at;this.on=true}else if(d.cmd==='stop'){this.on=false;if(this.n){this.port.postMessage(this.buf.slice(0,this.n));this.n=0}this.port.postMessage('done')}}}
+process(inputs){const ch=inputs[0]&&inputs[0][0];if(this.on&&ch){let i=0;if(currentTime<this.at){const skip=Math.ceil((this.at-currentTime)*sampleRate);if(skip>=ch.length)return true;i=skip}
+for(;i<ch.length;i++){this.buf[this.n++]=ch[i];if(this.n===this.buf.length){this.port.postMessage(this.buf.slice(0));this.n=0}}}return true}}
+registerProcessor('cabina-rec',R)`;
+function micUI(on){const b=$('#stMic');b.textContent=on?'■ PARAR GRABACIÓN':'● GRABAR CON MICRÓFONO';b.setAttribute('aria-pressed',String(on))}
+function micRelease(){if(mic.stream)mic.stream.getTracks().forEach(t=>t.stop());try{mic.src.disconnect();mic.node.disconnect();mic.sink.disconnect()}catch(_){}mic.stream=null}
+async function micStart(){const d=stDeck();if(!d.buffer){status('Primero carga el karaoke en el deck elegido.');return}
+  if(!navigator.mediaDevices||!navigator.mediaDevices.getUserMedia||!window.AudioWorkletNode){status('Este navegador no deja grabar con el micrófono. Usa Grabar o subir voz.');return}
+  const hp=$('#stPhones').checked;let stream;
+  try{stream=await navigator.mediaDevices.getUserMedia({audio:{echoCancellation:!hp,noiseSuppression:!hp,autoGainControl:!hp,channelCount:1}})}
+  catch(e){status(e&&e.name==='NotAllowedError'?'No diste permiso al micrófono. Actívalo en los permisos del navegador para esta página.':'No se encontró un micrófono.');return}
+  unlock();
+  try{if(!micModule){const u=URL.createObjectURL(new Blob([REC_WORKLET],{type:'text/javascript'}));await ctx.audioWorklet.addModule(u);micModule=true}}
+  catch(_){stream.getTracks().forEach(t=>t.stop());status('No se pudo preparar la grabación en este navegador.');return}
+  const src=ctx.createMediaStreamSource(stream),node=new AudioWorkletNode(ctx,'cabina-rec',{numberOfInputs:1,numberOfOutputs:1,channelCount:1,channelCountMode:'explicit'}),sink=ctx.createGain();sink.gain.value=0;
+  src.connect(node);node.connect(sink);sink.connect(ctx.destination);
+  Object.assign(mic,{stream,src,node,sink,chunks:[]});node.port.onmessage=e=>{if(e.data==='done')micBuild();else mic.chunks.push(e.data)};
+  const old=st.voice,oldP=st.vPeaks;st.voice=null;st.vPeaks=null;
+  if(!stPlay(0)){micRelease();st.voice=old;st.vPeaks=oldP;return}
+  node.port.postMessage({cmd:'start',at:st.t0});mic.rec=true;
+  let inLat=.02;try{const s=stream.getAudioTracks()[0].getSettings();if(s.latency)inLat=s.latency}catch(_){}
+  mic.lat=(ctx.outputLatency||ctx.baseLatency||.02)+inLat;micUI(true);
+  status(hp?'Grabando tu voz… canta sobre el karaoke.':'Grabando tu voz… con audífonos queda mejor.')}
+function micStop(){if(!mic.rec)return;mic.rec=false;try{mic.node.port.postMessage({cmd:'stop'})}catch(_){micBuild()}}
+function micBuild(){micRelease();micUI(false);const n=mic.chunks.reduce((a,c)=>a+c.length,0);
+  if(n<ctx.sampleRate*.5){mic.chunks=[];status('La grabación quedó muy corta. Intenta de nuevo.');return}
+  const buf=ctx.createBuffer(1,n,ctx.sampleRate),out=buf.getChannelData(0);let o=0;for(const c of mic.chunks){out.set(c,o);o+=c.length}mic.chunks=[];
+  st.voice=buf;st.vPeaks=computePeaks(buf);st.vStart=-Math.round(mic.lat*100)/100;st.from=0;
+  $('#stVoiceName').textContent='Grabación con micrófono · '+fmtR(buf.duration).slice(1);
+  status('¡Listo! Dale ESCUCHAR. Si tu voz se oye adelantada o atrasada, ajústala con ±0.1 y luego GRABAR MEZCLA.')}
+$('#stMic').onclick=()=>{if(mic.rec){stStop();return}micStart()};
+{const base=stStop;stStop=function(){base();if(mic.rec)micStop()}}
+
+/* ---------- Pantalla para TV ---------- */
+var tvOn=false;const tvCh=('BroadcastChannel' in window)?new BroadcastChannel('cabina-tv'):null;
+$('#tvBtn').onclick=()=>{if(!tvCh){status('Este navegador no permite la pantalla para TV.');return}
+  const w=window.open(location.pathname+'?pantalla=1','cabinaTV','popup,width=1280,height=720');
+  if(!w){status('El navegador bloqueó la ventana. Permite ventanas emergentes para esta página.');return}
+  tvOn=true;status('Pantalla TV abierta: llévala a la TV o al proyector y ponla en pantalla completa.')};
+if(tvCh)tvCh.onmessage=e=>{if(e.data&&e.data.t==='hello')tvOn=true};
+function tvMedia(){try{if(ytSrcOn()&&(ytPlaying()||(turn&&turn.yt)))return{kind:'yt',vid:yt.vid,t:yt.p.getCurrentTime()||0,playing:yt.p.getPlayerState()===1}}catch(_){}
+  if(pl.id&&!plVid.hidden&&(plIsPlaying()||mode==='player'))return{kind:'blob',url:plVid.currentSrc||plVid.src,t:plVid.currentTime,playing:plIsPlaying(),rate:1};
+  const d=liveDeck()||[decks.A,decks.B].find(x=>x.hasVid&&x.buffer);
+  if(d&&d.hasVid&&d.vidURL)return{kind:'blob',url:d.vidURL,t:pos(d),playing:d.playing,rate:d.rate};return null}
+setInterval(()=>{if(!tvCh||!tvOn)return;const v=lyViews[0],cs=getComputedStyle(document.documentElement),vars={};
+  for(const k of ['a','b','band1','band2','band3','band4','spot','glow'])vars[k]=cs.getPropertyValue('--'+k).trim();
+  const lyr=ly.lines.length?{prev:v.prev.textContent,cur:v.cur.textContent,next:v.next.textContent,p:v.cur.style.getPropertyValue('--p')||'100%'}:null;
+  const now=turn?`Canta: ${turn.name} · ${turn.song}${queue[0]?'   ·   Sigue: '+queue[0].name:''}`:(plIsPlaying()?pl.name:'');
+  tvCh.postMessage({t:'st',now,ly:lyr,media:tvMedia(),vars})},250);
+function tvMain(){document.title='Cabina · Pantalla TV';document.body.classList.add('tvmode');
+  const tv=document.createElement('div');tv.id='tv';
+  tv.innerHTML='<div class="tv-bg"><span class="jup tv-jup"></span></div><video id="tvVid" playsinline muted hidden></video><div id="tvYt" hidden><div id="tvYtP"></div></div><div class="tv-top"><span id="tvNow"></span><button class="mini" id="tvFs">PANTALLA COMPLETA</button></div><div class="tv-ly" hidden><div class="ly-prev"></div><div class="ly-cur"></div><div class="ly-next"></div></div><div class="tv-ded">PARA JÚPITER · DE FEL</div><div class="tv-wait" id="tvWait">Esperando a la Cabina… deja abierta la ventana principal.</div>';
+  document.body.appendChild(tv);const q=x=>tv.querySelector(x),vid=q('#tvVid');vid.muted=true;
+  q('#tvFs').onclick=()=>{try{const r=document.documentElement.requestFullscreen();if(r&&r.catch)r.catch(()=>{})}catch(_){}};
+  document.addEventListener('fullscreenchange',()=>{q('#tvFs').hidden=!!document.fullscreenElement});
+  if(!('BroadcastChannel' in window)){q('#tvWait').textContent='Este navegador no permite la pantalla para TV.';return}
+  const ch=new BroadcastChannel('cabina-tv');let last=0,ytp=null,ytVid=null,ytReady=false,ytLoading=false;
+  function tvYt(md){if(!window.YT||!YT.Player){if(!ytLoading){ytLoading=true;const sc=document.createElement('script');sc.src='https://www.youtube.com/iframe_api';document.head.appendChild(sc)}return}
+    if(!ytp){ytVid=md.vid;ytp=new YT.Player('tvYtP',{width:'100%',height:'100%',videoId:md.vid,host:'https://www.youtube-nocookie.com',playerVars:{playsinline:1,rel:0,controls:0,mute:1,origin:location.origin},events:{onReady:()=>{ytReady=true;try{ytp.mute()}catch(_){}}}});return}
+    if(!ytReady)return;try{if(ytVid!==md.vid){ytVid=md.vid;ytp.loadVideoById(md.vid,md.t);ytp.mute();return}
+      if(Math.abs((ytp.getCurrentTime()||0)-md.t)>.6)ytp.seekTo(md.t,true);const s=ytp.getPlayerState();if(md.playing&&s!==1)ytp.playVideo();if(!md.playing&&s===1)ytp.pauseVideo()}catch(_){}}
+  ch.onmessage=e=>{const m=e.data;if(!m||m.t!=='st')return;last=performance.now();q('#tvWait').hidden=true;
+    if(m.vars)for(const k in m.vars)if(m.vars[k])document.documentElement.style.setProperty('--'+k,m.vars[k]);
+    q('#tvNow').textContent=m.now||'';const L=q('.tv-ly');L.hidden=!m.ly;
+    if(m.ly){L.querySelector('.ly-prev').textContent=m.ly.prev;const c=L.querySelector('.ly-cur');c.textContent=m.ly.cur;c.style.setProperty('--p',m.ly.p);L.querySelector('.ly-next').textContent=m.ly.next}
+    const md=m.media;
+    if(md&&md.kind==='blob'){q('#tvYt').hidden=true;if(ytp&&ytReady)try{ytp.pauseVideo()}catch(_){}vid.hidden=false;
+      if(vid.dataset.src!==md.url){vid.dataset.src=md.url;vid.src=md.url}
+      if(Math.abs(vid.playbackRate-(md.rate||1))>.001)vid.playbackRate=md.rate||1;
+      const tt=md.t+(md.playing?.1:0);if(vid.readyState>0&&Math.abs(vid.currentTime-tt)>.3)vid.currentTime=tt;
+      if(md.playing&&vid.paused)vid.play().catch(()=>{});if(!md.playing&&!vid.paused)vid.pause()}
+    else if(md&&md.kind==='yt'){vid.hidden=true;if(!vid.paused)vid.pause();q('#tvYt').hidden=false;tvYt(md)}
+    else{vid.hidden=true;if(!vid.paused)vid.pause();q('#tvYt').hidden=true;if(ytp&&ytReady)try{ytp.pauseVideo()}catch(_){}}
+    tv.classList.toggle('hasmedia',!!md)};
+  setInterval(()=>{if(performance.now()-last>3000)q('#tvWait').hidden=false},1000);
+  ch.postMessage({t:'hello'})}
+
 /* ---------- Demos sintetizados ---------- */
 async function makeDemo({bpm,root,prog,wave}){
   const sr=44100,beat=60/bpm,beats=64,secs=beat*beats+.5;
@@ -1876,7 +2013,9 @@ async function makeDemo({bpm,root,prog,wave}){
   try{db=await openDB();const rows=await store('readonly',s=>s.getAll());const padRows=[];rows.sort((a,b)=>a.added-b.added).forEach(r=>{if(r.pad)padRows.push(r);else lib.push(r)});
     for(const r of padRows){const i=pads.findIndex(x=>x.custom&&x.slot===r.slot);if(i>=0){try{setCustom(i,r.name,await decode(await r.blob.arrayBuffer()),r.blob)}catch(_){}}}$('#storeNote').textContent='Se guardan en este navegador'}
   catch(e){db=null;$('#storeNote').textContent='Este navegador no guarda canciones: se quedan solo en esta sesión'}
-  renderList();status('Generando pistas demo…');
+  renderList();
+  if(lib.some(e=>!e.demo)){status('Listo. Elige una canción del repertorio.');return}
+  status('Generando pistas demo…');
   try{
     const [b1,b2]=await Promise.all([makeDemo({bpm:124,root:55,prog:[0,0,-4,-2],wave:'sawtooth'}),makeDemo({bpm:120,root:49,prog:[0,3,5,3],wave:'square'})]);
     const d1={id:'demo1',name:'Demo · Malecón 124',demo:true,bpm:124,buffer:b1},d2={id:'demo2',name:'Demo · Garita 120',demo:true,bpm:120,buffer:b2};
