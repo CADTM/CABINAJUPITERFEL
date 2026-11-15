@@ -1299,7 +1299,7 @@ function store(mode,fn){return new Promise((res,rej)=>{const t=db.transaction('t
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const mb=n=>(n/1048576).toFixed(1)+' MB';
 let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem('cabina-favs')||'[]'))}catch(_){}
-const libView={f:'all',s:'new'};try{Object.assign(libView,JSON.parse(localStorage.getItem('cabina-libview')||'{}'))}catch(_){}
+const libView={f:'all',s:'new'};try{const v=JSON.parse(localStorage.getItem('cabina-libview')||'{}');if(v.s)libView.s=v.s}catch(_){}
 function saveFavs(){try{localStorage.setItem('cabina-favs',JSON.stringify([...favs]))}catch(_){}}
 function playCounts(){const m=new Map(),h=(typeof hist!=='undefined'&&hist)||[];for(const x of h)if(x.id)m.set(x.id,(m.get(x.id)||0)+1);return m}
 document.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{libView.f=b.dataset.f;try{localStorage.setItem('cabina-libview',JSON.stringify(libView))}catch(_){}renderList()});
@@ -1319,7 +1319,7 @@ function renderList(){renderLists();renderQSongs();const lst=curList();
     const info=document.createElement('div');info.className='t-info';
     const nm=document.createElement('div');nm.className='t-name';nm.textContent=e.name;
     const meta=document.createElement('div');meta.className='t-meta';
-    const parts=e.demo?[`DEMO`,`${e.bpm} BPM`,fmtR(e.buffer.duration).slice(1)]:[(isVid(e)?'VIDEO ':'')+e.ext.toUpperCase(),mb(e.size),e.session?'solo esta sesión':''];
+    const parts=e.demo?[`DEMO`,`${e.bpm} BPM`,fmtR(e.buffer.duration).slice(1)]:[(isVid(e)?'VIDEO ':'')+e.ext.toUpperCase(),mb(e.size),e.saving?'guardando…':e.session?'solo esta sesión':''];
     const nPl=pc.get(e.id);if(nPl)parts.push(`×${nPl}`);
     parts.filter(Boolean).forEach((p,k)=>{const s=document.createElement('span');s.textContent=p;if(k===0&&isVid(e))s.className='vid-tag';meta.appendChild(s)});
     for(const L of ['A','B'])if(decks[L].trackId===e.id){const s=document.createElement('span');s.className='on-'+L.toLowerCase();s.textContent='EN '+L;meta.appendChild(s)}
@@ -1345,15 +1345,26 @@ list.addEventListener('click',async ev=>{
 q.oninput=renderList;
 
 const audioRx=/\.(mp3|wav|m4a|aac|ogg|oga|flac|opus|webm|mp4|m4v|mov|mkv)$/i;
+let saveChain=Promise.resolve(),saveLeft=0;
 async function addFiles(files){
-  let n=0;
+  const added=[];
   for(const f of files){
     const vid=f.type.startsWith('video')||/\.(mp4|m4v|mov|mkv)$/i.test(f.name);if(!(vid||f.type.startsWith('audio')||audioRx.test(f.name)))continue;
-    const e={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),name:f.name.replace(/\.[^.]+$/,''),ext:(f.name.match(/\.([^.]+)$/)||[,'audio'])[1],size:f.size,video:vid,blob:f,added:Date.now()};
-    if(db){try{await store('readwrite',s=>s.put(e))}catch(err){e.session=true}}else e.session=true;
-    lib.push(e);n++;
+    const e={id:'t'+Date.now().toString(36)+Math.random().toString(36).slice(2,7),name:f.name.replace(/\.[^.]+$/,''),ext:(f.name.match(/\.([^.]+)$/)||[,'audio'])[1],size:f.size,video:vid,blob:f,added:Date.now()+added.length,saving:!!db};
+    if(!db)e.session=true;lib.push(e);added.push(e);
   }
-  status(n?`Agregaste ${n} ${n===1?'canción':'canciones'} al repertorio`:'Esos archivos no son de audio ni de video.');renderList();
+  if(!added.length){status('Esos archivos no son de audio ni de video.');return}
+  if(libView.f==='fav'||(libView.f==='video'&&!added.some(isVid))||(libView.f==='audio'&&added.every(isVid)))libView.f='all';
+  if(curList()&&!listEdit)$('#listSel').value='';if(q.value.trim())q.value='';
+  renderList();list.scrollIntoView({behavior:'smooth',block:'nearest'});
+  status(`Agregaste ${added.length} ${added.length===1?'canción':'canciones'} al repertorio${db?'; guardando en el teléfono…':''}`);
+  if(!db)return;
+  saveLeft+=added.length;
+  for(const e of added)saveChain=saveChain.then(async()=>{
+    try{await Promise.race([store('readwrite',s=>s.put({id:e.id,name:e.name,ext:e.ext,size:e.size,video:e.video,blob:e.blob,added:e.added})),new Promise((_,rj)=>setTimeout(()=>rj(new Error('lento')),120000))])}
+    catch(err){e.session=true}
+    e.saving=false;saveLeft--;renderList();
+    status(saveLeft>0?`Guardando en el teléfono… faltan ${saveLeft}`:(added.some(x=>x.session)?'Algunas canciones no se pudieron guardar: funcionan ahora, pero hay que cargarlas otra vez si cierras la app.':'Listo: tus canciones quedaron guardadas.'))});
 }
 $('#files').onchange=e=>{addFiles([...e.target.files]);e.target.value=''};
 const drop=$('#drop');
