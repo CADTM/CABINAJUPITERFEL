@@ -49,8 +49,8 @@ body::after{content:"";position:fixed;right:-26vmax;bottom:-30vmax;width:62vmax;
 .status{font-family:var(--f-mono);font-size:12px;color:var(--muted);min-height:1.4em}
 .console{display:grid;grid-template-columns:minmax(0,1fr) minmax(250px,300px) minmax(0,1fr);gap:12px;align-items:start}
 @media (max-width:920px){.console{grid-template-columns:minmax(0,1fr)}}
-.deck,.mixer,.lib,.studio,.fx,.lyr,.clap,.queue,.msgs,.kbsec,.plsec,.yt,.hist{--hud:var(--line-hi);position:relative;background:linear-gradient(180deg,rgba(255,220,180,.04),transparent 35%),var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 14px;min-width:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,220,180,.07)}
-.deck::before,.mixer::before,.lib::before,.studio::before,.fx::before,.lyr::before,.clap::before,.queue::before,.msgs::before,.kbsec::before,.plsec::before,.yt::before,.hist::before{content:"";position:absolute;inset:5px;border-radius:10px;pointer-events:none;opacity:.9;
+.deck,.mixer,.lib,.studio,.fx,.lyr,.clap,.queue,.msgs,.kbsec,.plsec,.yt,.hist,.beats{--hud:var(--line-hi);position:relative;background:linear-gradient(180deg,rgba(255,220,180,.04),transparent 35%),var(--panel);border:1px solid var(--line);border-radius:14px;padding:16px 14px 14px;min-width:0;backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);box-shadow:0 18px 44px rgba(0,0,0,.5),inset 0 1px 0 rgba(255,220,180,.07)}
+.deck::before,.mixer::before,.lib::before,.studio::before,.fx::before,.lyr::before,.clap::before,.queue::before,.msgs::before,.kbsec::before,.plsec::before,.yt::before,.hist::before,.beats::before{content:"";position:absolute;inset:5px;border-radius:10px;pointer-events:none;opacity:.9;
   background:linear-gradient(var(--hud),var(--hud)) left top/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) left top/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) right top/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) right top/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) left bottom/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) left bottom/2px 16px no-repeat,linear-gradient(var(--hud),var(--hud)) right bottom/16px 2px no-repeat,linear-gradient(var(--hud),var(--hud)) right bottom/2px 16px no-repeat}
 .deck{--c:var(--a);--hud:var(--c);display:grid;gap:10px;border-color:color-mix(in srgb,var(--c) 34%,var(--line));box-shadow:0 18px 44px rgba(0,0,0,.5),0 0 30px color-mix(in srgb,var(--c) 10%,transparent),inset 0 1px 0 rgba(255,220,180,.07)}
 #deckB{--c:var(--b)}
@@ -381,6 +381,28 @@ footer{display:grid;gap:4px;justify-items:center;padding-block:10px 4px}
 .t-act .fav{width:34px;height:34px;padding:0;font-size:17px;color:var(--muted)}
 .t-act .fav[aria-pressed=true]{color:var(--a);border-color:var(--a);box-shadow:0 0 10px color-mix(in srgb,var(--a) 35%,transparent)}
 .t-meta .vid-tag{color:var(--b)}
+.beats{display:grid;gap:12px}
+.bt-ctl{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px}
+.bt-ctl select{height:34px;border-radius:8px;border:1px solid var(--line);background:var(--well);color:var(--fg);font:inherit;padding:0 8px}
+.bt-ctl .master{flex:1 1 200px}
+.bt-bpm{font-family:var(--f-mono);font-size:20px;min-width:56px;text-align:center;color:var(--a);text-shadow:0 0 10px color-mix(in srgb,var(--a) 50%,transparent)}
+#btPlay{font-family:var(--f-disp);font-weight:700;letter-spacing:.12em}
+#btPlay[aria-pressed=true]{border-color:var(--ok);color:var(--ok);background:color-mix(in srgb,var(--ok) 16%,var(--panel2))}
+.bt-slots{display:inline-flex;gap:4px}
+.bt-slot{width:36px;height:34px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);color:var(--muted);font-family:var(--f-disp);font-weight:700}
+.bt-slot[aria-pressed=true]{border-color:var(--a);color:var(--fg);background:color-mix(in srgb,var(--a) 26%,var(--panel2))}
+.bt-slot.queued{border-style:dashed;border-color:var(--b);color:var(--b)}
+.bt-wrap{overflow-x:auto;border-radius:12px;padding:10px;background:var(--well);box-shadow:inset 0 0 0 1px var(--line)}
+.bt-grid{display:grid;gap:5px;min-width:560px}
+.bt-row{display:grid;grid-template-columns:96px repeat(16,minmax(0,1fr));gap:4px;align-items:center}
+.bt-name{height:30px;border-radius:6px;border:1px solid var(--line);background:var(--panel2);color:var(--fg);font-family:var(--f-mono);font-size:10.5px;letter-spacing:.04em;text-align:left;padding:0 8px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+.bt-name[aria-pressed=false]{color:var(--muted);text-decoration:line-through;opacity:.6}
+.bt-cell{height:30px;border-radius:5px;border:1px solid #2a201f;background:#17110f;padding:0}
+.bt-cell.beat{background:#21171a}
+.bt-cell[aria-pressed=true]{background:linear-gradient(180deg,color-mix(in srgb,var(--a) 85%,#fff),var(--a));border-color:var(--a);box-shadow:0 0 10px color-mix(in srgb,var(--a) 45%,transparent)}
+.bt-row:nth-child(n+5) .bt-cell[aria-pressed=true]{background:linear-gradient(180deg,color-mix(in srgb,var(--b) 80%,#fff),var(--b));border-color:var(--b);box-shadow:0 0 10px color-mix(in srgb,var(--b) 45%,transparent)}
+.bt-cell.now{outline:2px solid var(--fg);outline-offset:-2px}
+@media (max-width:480px){.bt-grid{min-width:460px}.bt-row{grid-template-columns:62px repeat(16,minmax(0,1fr));gap:3px}.bt-name{font-size:9px;padding:0 4px}.bt-cell,.bt-name{height:34px}}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -496,6 +518,26 @@ body.guestmode>*:not(#guest){display:none!important}
     </section>
     <section class="deck" id="deckB" aria-label="Deck B"></section>
   </main>
+
+  <section class="beats" aria-label="Beats">
+    <div class="lib-head"><h2>Beats</h2><span class="chip">Caja de ritmos para mezclar encima de tus canciones</span></div>
+    <div class="bt-ctl">
+      <button class="tog" id="btPlay" aria-pressed="false">▶ TOCAR</button>
+      <span class="st-k">BPM</span><button class="mini" id="btDn" aria-label="Más lento">−</button><output class="bt-bpm" id="btBpmO">120</output><button class="mini" id="btUp" aria-label="Más rápido">+</button><button class="mini" id="btTap">TAP</button>
+      <label class="st-row"><span class="st-k">SEGUIR</span><select id="btFollow"><option value="free">Tempo propio</option><option value="live">Lo que suena</option><option value="A">Seguir deck A</option><option value="B">Seguir deck B</option></select></label>
+    </div>
+    <div class="bt-ctl">
+      <span class="st-k">PATRÓN</span><span class="bt-slots"><button class="bt-slot" data-s="0">A</button><button class="bt-slot" data-s="1">B</button><button class="bt-slot" data-s="2">C</button><button class="bt-slot" data-s="3">D</button></span>
+      <label class="st-row"><span class="st-k">RITMO</span><select id="btPre"><option value="">Cargar ritmo…</option></select></label>
+      <button class="mini" id="btClear">BORRAR</button>
+    </div>
+    <div class="bt-wrap"><div class="bt-grid" id="btGrid"></div></div>
+    <div class="bt-ctl">
+      <label class="master"><span>SWING</span><input type="range" id="btSwing" min="0" max="0.6" step="0.01" value="0"><output id="btSwingO">0%</output></label>
+      <label class="st-row"><span class="st-k">TONO 808</span><select id="btKey"><option value="0">La</option><option value="2">Si</option><option value="3">Do</option><option value="5">Re</option><option value="7">Mi</option><option value="8">Fa</option><option value="10">Sol</option></select></label>
+      <label class="master"><span>VOLUMEN</span><input type="range" id="btVol" min="0" max="1.2" step="0.01" value="0.8"><output id="btVolO">80%</output></label>
+    </div>
+  </section>
 
   <section class="plsec" id="plSec" aria-label="Reproductor" hidden>
     <div class="pl-grid">
@@ -759,6 +801,16 @@ body.guestmode>*:not(#guest){display:none!important}
         <li><b>LOOP 1, 2 y 4</b> repiten 1, 2 o 4 compases desde donde va la canción. Tócalo otra vez para salir. Usa el BPM del deck; sin BPM cada compás dura 2 segundos (mídelo con TAP).</li>
         <li><b>ECO</b> repite el sonido al ritmo de la canción. Al apagarlo, la cola del eco se desvanece sola.</li>
         <li><b>FRENO</b> detiene la canción como un tocadiscos al apagarse. <b>REBOBINAR</b> la hace sonar hacia atrás rápido y regresa al punto CUE.</li>
+      </ul>
+      <h3>Beats</h3>
+      <ul>
+        <li>Una caja de ritmos con 8 sonidos: bombo, tarola, palmas, hi-hat, hat abierto, tom, güiro y 808. Toca los cuadritos para prender o apagar cada golpe; son 16 pasos por compás.</li>
+        <li><b>▶ TOCAR</b> arranca el ritmo, que suena encima de lo que esté en los decks y entra en las grabaciones.</li>
+        <li><b>RITMO</b> carga un patrón listo: House, Reggaetón, Cumbia, Hip-hop, Trap, Pop o Bachata. Luego lo puedes cambiar a tu gusto.</li>
+        <li><b>PATRÓN A, B, C, D</b> son cuatro memorias. Si cambias de patrón mientras suena, el cambio entra al empezar el siguiente compás, como en una caja de ritmos de verdad.</li>
+        <li><b>SEGUIR</b>: con "Deck A", "Deck B" o "Lo que suena", los beats toman el BPM de esa canción y se acomodan a su tiempo. Con "Tempo propio" usas el BPM de aquí (− / + o TAP).</li>
+        <li><b>SWING</b> le da sabor atrasando los contratiempos. <b>TONO 808</b> cambia la nota del bajo 808 y del tom. Toca el nombre de un sonido para silenciarlo.</li>
+        <li>Tus patrones se guardan solos y entran en el respaldo.</li>
       </ul>
       <h3>Mezcladora</h3>
       <ul>
@@ -1288,7 +1340,7 @@ function frame(now){const dt=Math.min(.1,(now-last)/1000);last=now;frameN++;last
     setTxt(d.el.bpm,d.bpm?(d.bpm*d.rate).toFixed(1)+' BPM':'— BPM');
     if(consoleOn&&(d.playing||d.rewinding||now-(d.poke||0)<1000||frameN%6===0)){drawZoom(d,t);drawOver(d,t);drawPlatter(d);drawVU(d)}
   }
-  autoTick();if(!$('.studio').hidden)studioTick();lyTick();clTick(dt);qTick();sleepTick();plTick();pvTick();if(!party.hidden)drawParty(dt);requestAnimationFrame(frame)}
+  autoTick();if(!$('.studio').hidden)studioTick();lyTick();clTick(dt);qTick();sleepTick();btTick();plTick();pvTick();if(!party.hidden)drawParty(dt);requestAnimationFrame(frame)}
 requestAnimationFrame(frame);
 setInterval(()=>{if(performance.now()-lastFrameAt<700)return;try{autoTick();qTick();sleepTick();if(st.playing)studioTick()}catch(_){}},500);
 
@@ -1818,7 +1870,7 @@ async function readZip(blob){const tail=new DataView(await blob.slice(Math.max(0
   return out}
 async function exportBackup(full){if(!st.dl){status('Exportar el respaldo solo funciona al abrir la página en claude.ai.');return}
   status(full?'Preparando respaldo completo; puede tardar si tienes muchas canciones…':'Preparando respaldo ligero…');
-  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList,hist,favs:[...favs]};
+  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList,hist,favs:[...favs],beats:{slots:bt.slots,bpm:bt.bpm,swing:bt.swing,key:bt.key||0}};
     for(const e of lib){if(e.demo)continue;const t={id:e.id,name:e.name,ext:e.ext,size:e.size,video:!!e.video,added:e.added};
       if(full&&e.blob){t.file='canciones/'+e.id+'.'+(e.ext||'bin');files.push({name:t.file,data:e.blob})}m.tracks.push(t)}
     for(const pd of pads)if(pd.buf&&pd.blob){const file='pads/pad'+pd.slot;m.pads.push({slot:pd.slot,name:pd.n,file});files.push({name:file,data:pd.blob})}
@@ -1838,6 +1890,7 @@ $('#importFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value=
     for(const l of m.lists||[])if(!lists.some(x=>x.id===l.id))lists.push(l);saveLists();
     if(!queue.length&&Array.isArray(m.queue)){queue=m.queue;saveQ();renderQ()}
     if(Array.isArray(m.rank)){rank=rank.concat(m.rank.filter(r=>!rank.some(x=>x.at===r.at))).sort((a,b)=>b.score-a.score).slice(0,10);try{localStorage.setItem('cabina-rank',JSON.stringify(rank))}catch(_){}renderRank()}
+    if(m.beats&&Array.isArray(m.beats.slots)&&m.beats.slots.length===4){bt.slots=m.beats.slots;bt.bpm=m.beats.bpm||bt.bpm;btSave();btBuild();btBpmUI()}
     if(Array.isArray(m.favs)){m.favs.forEach(x=>favs.add(x));saveFavs()}
     if(Array.isArray(m.hist)){for(const h of m.hist)if(h&&!hist.some(x=>x.at===h.at&&x.song===h.song))hist.push(h);hist.sort((a,b)=>a.at-b.at);saveHist();renderHist()}
     if(Array.isArray(m.yt)){for(const y of m.yt)if(y&&y.vid&&!ytList.some(x=>x.vid===y.vid))ytList.push(y);saveYt();renderYt()}
@@ -2006,6 +2059,84 @@ document.addEventListener('click',e=>{if(!$('#menuPop').hidden&&!e.target.closes
 $('#menuPop').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.id!=='vToggle'&&b.id!=='kbBtn')menuShow(false)});
 document.addEventListener('keydown',e=>{if(e.key==='Escape')menuShow(false)});
 
+/* ---------- Beats: caja de ritmos ---------- */
+const BT_ROWS=[['kick','BOMBO'],['snare','TAROLA'],['clap','PALMAS'],['hat','HI-HAT'],['ohat','HAT ABIERTO'],['tom','TOM'],['guiro','GÜIRO'],['b808','808']];
+const BT_PRE={
+  house:{n:'House',bpm:124,p:{kick:'x...x...x...x...',clap:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..x...x...x...x.'}},
+  dembow:{n:'Reggaetón',bpm:96,p:{kick:'x...x...x...x...',snare:'...x..x....x..x.',hat:'x.x.x.x.x.x.x.x.',b808:'x.......x.......'}},
+  cumbia:{n:'Cumbia',bpm:96,p:{kick:'x.......x.......',guiro:'x.xxx.xxx.xxx.xx',tom:'......x.......x.',snare:'....x.......x...'}},
+  hiphop:{n:'Hip-hop',bpm:90,p:{kick:'x......x..x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..............x.'}},
+  trap:{n:'Trap',bpm:140,p:{kick:'x.........x.....',clap:'........x.......',hat:'xxxxxxxxxxx.xxxx',b808:'x.........x...x.'}},
+  pop:{n:'Pop',bpm:110,p:{kick:'x.......x.x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.'}},
+  bachata:{n:'Bachata',bpm:128,p:{kick:'x.......x.......',guiro:'x.x.x.x.x.x.x.x.',tom:'..x..x....x..x..',snare:'......x.......x.'}}};
+const bt={on:false,bpm:120,swing:0,follow:'free',slot:0,next:null,step:0,nextT:0,k:0,timer:null,mute:{},vis:[],slots:[]};
+const btBus=ctx.createGain();btBus.gain.value=.64;const btComp=ctx.createDynamicsCompressor();btComp.threshold.value=-10;btComp.ratio.value=4;btComp.attack.value=.003;btComp.release.value=.12;btBus.connect(btComp);btComp.connect(master);
+let btNoise=null;function btNz(){if(btNoise)return btNoise;const b=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;return btNoise=b}
+function btEnv(g,t,pk,dec,att){g.gain.setValueAtTime(.0001,t);g.gain.linearRampToValueAtTime(pk,t+(att||.002));g.gain.exponentialRampToValueAtTime(.0001,t+(att||.002)+dec)}
+let btOpenHat=null;
+function btHit(id,t){const o=btBus,G=()=>ctx.createGain(),F=(ty,f,q)=>{const x=ctx.createBiquadFilter();x.type=ty;x.frequency.value=f;if(q!=null)x.Q.value=q;return x};
+  const nz=(dur)=>{const s=ctx.createBufferSource();s.buffer=btNz();s.start(t,Math.random()*.5);s.stop(t+dur);return s};
+  const root=55*Math.pow(2,(+bt.key||0)/12);
+  if(id==='kick'){const x=ctx.createOscillator(),g=G();x.frequency.setValueAtTime(155,t);x.frequency.exponentialRampToValueAtTime(48,t+.11);btEnv(g,t,1,.38);x.connect(g);g.connect(o);x.start(t);x.stop(t+.45);
+    const c=nz(.02),cg=G();btEnv(cg,t,.25,.012,.0005);c.connect(F('highpass',3000)).connect(cg).connect(o)}
+  else if(id==='snare'){const n=nz(.25),g=G();btEnv(g,t,.7,.17);n.connect(F('bandpass',1900,.8)).connect(g).connect(o);const x=ctx.createOscillator(),tg=G();x.frequency.setValueAtTime(200,t);x.frequency.exponentialRampToValueAtTime(150,t+.08);btEnv(tg,t,.45,.1);x.connect(tg).connect(o);x.start(t);x.stop(t+.15)}
+  else if(id==='clap'){const n=nz(.3),g=G(),f=F('bandpass',1400,1.2);g.gain.setValueAtTime(.0001,t);[0,.011,.022].forEach(d=>{g.gain.linearRampToValueAtTime(.8,t+d+.001);g.gain.exponentialRampToValueAtTime(.12,t+d+.009)});g.gain.exponentialRampToValueAtTime(.0001,t+.24);n.connect(f).connect(g).connect(o)}
+  else if(id==='hat'){if(btOpenHat){try{btOpenHat.gain.cancelScheduledValues(t);btOpenHat.gain.setTargetAtTime(.0001,t,.008)}catch(_){}btOpenHat=null}const n=nz(.08),g=G();btEnv(g,t,.32,.045);n.connect(F('highpass',7500)).connect(g).connect(o)}
+  else if(id==='ohat'){const n=nz(.45),g=G();btEnv(g,t,.28,.32);n.connect(F('highpass',6500)).connect(g).connect(o);btOpenHat=g}
+  else if(id==='tom'){const x=ctx.createOscillator(),g=G();x.frequency.setValueAtTime(root*3.2,t);x.frequency.exponentialRampToValueAtTime(root*2.2,t+.25);btEnv(g,t,.75,.32);x.connect(g).connect(o);x.start(t);x.stop(t+.4)}
+  else if(id==='guiro'){const n=nz(.16),g=G(),am=ctx.createOscillator(),ag=G();am.frequency.value=34;ag.gain.value=.5;g.gain.value=0;am.connect(ag);const env=G();btEnv(env,t,.5,.12,.01);
+    const f=F('bandpass',3600,2.5);n.connect(f).connect(env);const mod=G();mod.gain.value=.5;ag.connect(mod.gain);env.connect(mod).connect(o);am.start(t);am.stop(t+.18)}
+  else if(id==='b808'){const x=ctx.createOscillator(),g=G(),sh=ctx.createWaveShaper(),cv=new Float32Array(256);for(let i=0;i<256;i++){const v=i/255*2-1;cv[i]=Math.tanh(2.2*v)}sh.curve=cv;
+    x.frequency.setValueAtTime(root*1.6,t);x.frequency.exponentialRampToValueAtTime(root,t+.06);btEnv(g,t,.85,.75,.004);x.connect(sh).connect(g).connect(o);x.start(t);x.stop(t+.85)}}
+function btBlank(){const p={};BT_ROWS.forEach(([id])=>p[id]=new Array(16).fill(0));return p}
+function btFrom(pre){const p=btBlank();for(const id in pre.p)p[id]=[...pre.p[id]].map(c=>c==='x'?1:0);return p}
+try{const sv=JSON.parse(localStorage.getItem('cabina-beats')||'null');if(sv&&Array.isArray(sv.slots)){bt.slots=sv.slots;bt.bpm=sv.bpm||120;bt.swing=sv.swing||0;bt.key=sv.key||0}}catch(_){}
+if(bt.slots.length!==4)bt.slots=[btFrom(BT_PRE.house),btFrom(BT_PRE.dembow),btFrom(BT_PRE.cumbia),btBlank()];
+function btSave(){try{localStorage.setItem('cabina-beats',JSON.stringify({slots:bt.slots,bpm:bt.bpm,swing:bt.swing,key:bt.key||0}))}catch(_){}}
+const btGrid=$('#btGrid');
+function btBuild(){btGrid.innerHTML='';const P=bt.slots[bt.slot];
+  BT_ROWS.forEach(([id,lbl])=>{const row=document.createElement('div');row.className='bt-row';row.dataset.r=id;
+    const nm=document.createElement('button');nm.className='bt-name';nm.textContent=lbl;nm.setAttribute('aria-pressed',String(!bt.mute[id]));nm.title='Tocar para silenciar o activar';
+    nm.onclick=()=>{bt.mute[id]=!bt.mute[id];nm.setAttribute('aria-pressed',String(!bt.mute[id]))};row.appendChild(nm);
+    for(let i=0;i<16;i++){const c=document.createElement('button');c.className='bt-cell'+(i%4===0?' beat':'');c.dataset.i=i;c.setAttribute('aria-label',`${lbl} paso ${i+1}`);c.setAttribute('aria-pressed',String(!!P[id][i]));
+      c.onclick=()=>{P[id][i]=P[id][i]?0:1;c.setAttribute('aria-pressed',String(!!P[id][i]));btSave();if(!bt.on){unlock();btHit(id,ctx.currentTime+.01)}};row.appendChild(c)}
+    btGrid.appendChild(row)});
+  document.querySelectorAll('.bt-slot').forEach(b=>b.setAttribute('aria-pressed',String(+b.dataset.s===bt.slot)))}
+function btDeck(){if(bt.follow==='free')return null;const d=bt.follow==='live'?liveDeck():decks[bt.follow];return d&&d.playing&&d.bpm?d:null}
+function btTempo(){const d=btDeck();return d?d.bpm*d.rate:bt.bpm}
+function btSched(){if(!bt.on)return;const ahead=ctx.currentTime+.14,d=btDeck();
+  if(d){const beat=60/d.bpm,sx=beat/4,bo=d.bOff||0,p=pos(d),now=ctx.currentTime;
+    let k=Math.ceil((p-bo)/sx-1e-6);if(bt.lastDeck!==d||k<bt.k-1)bt.k=k;bt.lastDeck=d;
+    for(;;){const tt=now+(bo+bt.k*sx-p)/d.rate;if(tt>ahead)break;const st=((bt.k%16)+16)%16,sw=st%2?bt.swing*sx/d.rate*.5:0;if(tt>=now-.01)btStep(st,Math.max(now,tt)+sw);bt.k++}
+    bt.nextT=0;return}
+  bt.lastDeck=null;const sx=60/bt.bpm/4;if(!bt.nextT||bt.nextT<ctx.currentTime-.2)bt.nextT=ctx.currentTime+.05;
+  while(bt.nextT<ahead){const sw=bt.step%2?bt.swing*sx*.5:0;btStep(bt.step,bt.nextT+sw);bt.nextT+=sx;bt.step=(bt.step+1)%16}}
+function btStep(i,t){if(i===0&&bt.next!=null){bt.slot=bt.next;bt.next=null;btBuild()}const P=bt.slots[bt.slot];
+  for(const [id] of BT_ROWS)if(P[id][i]&&!bt.mute[id])btHit(id,t);bt.vis.push([t,i])}
+function btPlay(on){bt.on=on;$('#btPlay').textContent=on?'■ PARAR':'▶ TOCAR';$('#btPlay').setAttribute('aria-pressed',String(on));
+  if(on){unlock();bt.step=0;bt.nextT=0;bt.k=0;bt.lastDeck=null;bt.timer=setInterval(btSched,25);btSched()}
+  else{clearInterval(bt.timer);bt.vis=[];btGrid.querySelectorAll('.now').forEach(c=>c.classList.remove('now'))}}
+$('#btPlay').onclick=()=>btPlay(!bt.on);
+$('#btClear').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.ask='1';b.textContent='¿BORRAR?';setTimeout(()=>{delete b.dataset.ask;b.textContent='BORRAR'},3000);return}
+  delete b.dataset.ask;b.textContent='BORRAR';bt.slots[bt.slot]=btBlank();btSave();btBuild()};
+document.querySelectorAll('.bt-slot').forEach(b=>b.onclick=()=>{const s=+b.dataset.s;if(bt.on&&s!==bt.slot){bt.next=s;status(`Cambia al patrón ${'ABCD'[s]} al empezar el compás`);document.querySelectorAll('.bt-slot').forEach(x=>x.classList.toggle('queued',+x.dataset.s===s))}else{bt.slot=s;btBuild()}});
+{const sel=$('#btPre');for(const k in BT_PRE){const o=document.createElement('option');o.value=k;o.textContent=BT_PRE[k].n+' · '+BT_PRE[k].bpm;sel.appendChild(o)}
+  sel.onchange=()=>{const k=sel.value;if(!k)return;const pr=BT_PRE[k];bt.slots[bt.slot]=btFrom(pr);if(bt.follow==='free'){bt.bpm=pr.bpm;btBpmUI()}btSave();btBuild();sel.value='';status(`Patrón ${'ABCD'[bt.slot]}: ${pr.n}`)}}
+function btBpmUI(){$('#btBpmO').textContent=Math.round(btTempo()*10)/10}
+const btSetBpm=v=>{bt.bpm=clamp(Math.round(v),60,200);btSave();btBpmUI()};
+$('#btDn').onclick=()=>btSetBpm(bt.bpm-1);$('#btUp').onclick=()=>btSetBpm(bt.bpm+1);
+{let taps=[];$('#btTap').onclick=()=>{const n=performance.now();if(taps.length&&n-taps[taps.length-1]>2000)taps=[];taps.push(n);if(taps.length>6)taps.shift();
+  if(taps.length>=3){btSetBpm(60000/((taps[taps.length-1]-taps[0])/(taps.length-1)))}}}
+$('#btFollow').onchange=e=>{bt.follow=e.target.value;bt.nextT=0;const d=btDeck();if(bt.follow!=='free'&&!d)status('Los beats seguirán al deck cuando suene y tenga BPM; mientras, usan el tempo de aquí.');btBpmUI()};
+$('#btSwing').value=bt.swing;$('#btSwingO').textContent=Math.round(bt.swing*100)+'%';
+$('#btSwing').oninput=e=>{bt.swing=+e.target.value;$('#btSwingO').textContent=Math.round(bt.swing*100)+'%';btSave()};
+$('#btKey').value=bt.key||0;$('#btKey').onchange=e=>{bt.key=+e.target.value;btSave()};
+$('#btVol').oninput=e=>{const v=+e.target.value;setP(btBus.gain,v*v);$('#btVolO').textContent=Math.round(v*100)+'%'};
+function btTick(){if(!bt.on)return;const now=ctx.currentTime;let cur=null;while(bt.vis.length&&bt.vis[0][0]<=now)cur=bt.vis.shift()[1];
+  if(cur!=null&&!$('.beats').hidden){btGrid.querySelectorAll('.now').forEach(c=>c.classList.remove('now'));btGrid.querySelectorAll(`.bt-cell[data-i="${cur}"]`).forEach(c=>c.classList.add('now'))}
+  if(frameN%15===0)btBpmUI();if(bt.next==null)document.querySelectorAll('.bt-slot.queued').forEach(x=>x.classList.remove('queued'))}
+btBuild();btBpmUI();
+
 /* ---------- Video de YouTube dentro de la página ---------- */
 var yt={p:null,vid:null,wait:[],loading:false};
 function ytApi(){return new Promise((res,rej)=>{if(window.YT&&YT.Player)return res(YT);yt.wait.push({res,rej});if(yt.loading)return;yt.loading=true;
@@ -2025,8 +2156,8 @@ function ytErr(e){const c=e.data;status(c===101||c===150||c===153?'Este video no
 $('#ytClose').onclick=()=>{try{if(yt.p&&yt.p.stopVideo)yt.p.stopVideo()}catch(_){}$('#ytStage').hidden=true};
 
 /* ---------- Modos y vista ---------- */
-const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['hist','Historial','.hist'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib']];
-const MODE_DEF={dj:['console','auto','fx','lib'],karaoke:['console','yt','lyr','queue','clap','hist','msgs','studio','lib'],player:['player','lib']};
+const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['beats','Beats','.beats'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['hist','Historial','.hist'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib']];
+const MODE_DEF={dj:['console','beats','auto','fx','lib'],karaoke:['console','yt','lyr','queue','clap','hist','msgs','studio','lib'],player:['player','lib']};
 const MODE_MIN={dj:['console','lib'],karaoke:['console','yt','queue','lib'],player:['player','lib']};
 const MODE_NAME={dj:'DJ',karaoke:'Karaoke',player:'Reproductor'};
 const defView=m=>{const v={};VIEW.forEach(([k])=>v[k]=MODE_MIN[m].includes(k));return v};
