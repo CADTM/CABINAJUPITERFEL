@@ -40,7 +40,7 @@ body::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:0;opa
 body::after{content:"";position:fixed;right:-26vmax;bottom:-30vmax;width:62vmax;height:62vmax;border-radius:50%;pointer-events:none;z-index:0;opacity:.17;
   background:radial-gradient(circle at 35% 32%,transparent 38%,rgba(0,0,0,.85) 72%),repeating-linear-gradient(172deg,var(--band1) 0 3.5%,var(--band2) 3.5% 6%,var(--band3) 6% 8.5%,var(--band1) 8.5% 11%,var(--band4) 11% 12.5%)}
 .wrap{position:relative;z-index:1;max-width:1280px;margin:0 auto;padding-block:16px 28px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));display:grid;gap:14px}
-.top{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:6px 16px}
+.top{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:4px 12px}
 .brand{display:flex;align-items:center;flex-wrap:wrap;gap:6px 14px}
 .logo{font-family:var(--f-disp);font-weight:900;font-size:22px;letter-spacing:.18em;background:linear-gradient(90deg,var(--band1),var(--a) 55%,var(--spot));-webkit-background-clip:text;background-clip:text;color:transparent}
 .jup{width:30px;height:30px;border-radius:50%;flex:none;position:relative;background:radial-gradient(circle at 34% 30%,transparent 30%,rgba(0,0,0,.55) 75%),radial-gradient(ellipse 18% 11% at 62% 66%,var(--spot) 60%,transparent 64%),linear-gradient(175deg,var(--band1) 0 18%,var(--band3) 18% 26%,var(--band2) 26% 40%,var(--band1) 40% 50%,var(--band4) 50% 56%,var(--band2) 56% 70%,var(--band3) 70% 80%,var(--band1) 80%);box-shadow:0 0 18px rgba(240,160,90,.5)}
@@ -349,6 +349,29 @@ a.yt-go[aria-disabled=true]{opacity:.45;pointer-events:none}
 .hist{display:grid;gap:12px}
 .hs-t{font-family:var(--f-mono);font-size:12px;color:var(--a);min-width:44px}
 .hs-n{font-family:var(--f-mono);font-size:12px;color:var(--a);min-width:30px}
+.top .status{flex-basis:100%;order:3;font-size:11px;min-height:1.2em}
+@media (max-width:640px){.top .sub{display:none}.logo{font-size:17px;letter-spacing:.14em}.jup{width:24px;height:24px}}
+.menu-wrap{position:relative}
+#menuBtn[aria-expanded=true]{border-color:var(--a);background:color-mix(in srgb,var(--a) 22%,var(--panel2))}
+.menu{position:absolute;right:0;top:calc(100% + 8px);z-index:55;display:grid;gap:8px;min-width:220px;padding:12px;border-radius:14px;border:1px solid var(--line-hi);background:#140e10;box-shadow:0 14px 34px rgba(0,0,0,.6),0 0 22px rgba(246,180,74,.15)}
+.menu .hbtn{width:100%;justify-content:flex-start;text-align:left}
+.menu-skin{display:flex;align-items:center;justify-content:space-between;gap:8px}
+.menu-skin .hsel{flex:1}
+.modebar{gap:6px}
+.modes{padding:3px 3px 3px 12px}
+.mode{height:32px;padding:0 13px;font-size:10.5px}
+@media (max-width:420px){.modes .auto-t{display:none}.modes{padding:3px}.mode{padding:0 11px}}
+footer{display:grid;gap:4px;justify-items:center;padding-block:10px 4px}
+.ded-foot{font-family:var(--f-disp);font-weight:700;font-size:15px;letter-spacing:.16em;background:linear-gradient(90deg,var(--band1),var(--a) 55%,var(--spot));-webkit-background-clip:text;background-clip:text;color:transparent}
+.kbsec.full{position:fixed;inset:0;z-index:70;border-radius:0;margin:0;display:flex;flex-direction:column;gap:8px;background:#0b080b;padding:max(10px,env(safe-area-inset-top,0px)) max(12px,env(safe-area-inset-right,0px)) max(10px,env(safe-area-inset-bottom,0px)) max(12px,env(safe-area-inset-left,0px))}
+.kbsec.full::before{display:none}
+.kbsec.full .lib-head .chip,.kbsec.full .kb-ctl2{display:none}
+.kbsec.full .kb-wrap{flex:1;min-height:0;display:flex}
+.kbsec.full .kb{height:auto;flex:1}
+.kbsec.full.rot{inset:auto;top:0;left:100vw;width:100vh;height:100vw;transform-origin:0 0;transform:rotate(90deg)}
+.kbsec.big .kw{min-width:20px;font-size:10px}
+.kbsec.big .kbk{font-size:8px}
+#kbFull[aria-pressed=true]{border-color:var(--a);background:color-mix(in srgb,var(--a) 26%,var(--panel2))}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -396,19 +419,20 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
 <div class="wrap">
   <header class="top">
     <div class="brand"><span class="jup" aria-hidden="true"></span><span class="logo">CABINA JÚPITER</span><span class="sub">Estación orbital · 2 decks · mezcladora</span></div>
-    <div class="top-r"><div id="status" class="status" role="status">Preparando audio…</div><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="tvBtn">PANTALLA TV</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="installBtn" hidden>INSTALAR</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button></div>
+    <div class="menu-wrap"><button class="hbtn" id="menuBtn" aria-expanded="false" aria-controls="menuPop">MENÚ</button>
+      <div class="menu" id="menuPop" hidden>
+        <label class="menu-skin"><span class="st-k">SKIN</span><select id="skinSel" class="hsel" aria-label="Skin"><option value="jupiter">JÚPITER</option><option value="saturno">SATURNO</option><option value="marte">MARTE</option><option value="nebulosa">NEBULOSA</option></select></label>
+        <button class="hbtn" id="vToggle" aria-expanded="false" aria-controls="viewBar">SECCIONES</button><button class="hbtn" id="kbBtn" aria-pressed="false">TECLADO</button><button class="hbtn" id="tvBtn">PANTALLA TV</button><button class="hbtn" id="partyBtn" aria-haspopup="dialog">MODO FIESTA</button><button class="hbtn" id="installBtn" hidden>INSTALAR</button><button class="hbtn" id="manualBtn" aria-haspopup="dialog">MANUAL</button>
+      </div>
+    </div>
+    <div id="status" class="status" role="status">Preparando audio…</div>
   </header>
 
   <nav class="modebar" aria-label="Modo">
     <div class="modes" role="group" aria-label="Modo de la Cabina"><span class="auto-t">MODO</span><button class="mode" data-mode="dj" aria-pressed="false">DJ</button><button class="mode" data-mode="karaoke" aria-pressed="false">KARAOKE</button><button class="mode" data-mode="player" aria-pressed="false">REPRODUCTOR</button></div>
-    <button class="mini" id="vToggle" aria-expanded="false" aria-controls="viewBar">AJUSTAR SECCIONES</button>
   </nav>
-  <div class="viewbar" id="viewBar" hidden><span class="auto-t">VER</span><span id="viewChips" class="viewbar"></span><span class="sep"></span><button class="mini" id="vAll">TODO</button><button class="mini" id="vMin">MÍNIMO</button></div>
+  <div class="viewbar" id="viewBar" hidden><span class="auto-t">VER</span><span id="viewChips" class="viewbar"></span><span class="sep"></span><button class="mini" id="vMin">MÍNIMO</button><button class="mini" id="vNormal">NORMAL</button><button class="mini" id="vAll">TODO</button></div>
 
-  <section class="dedic" aria-label="Dedicatoria">
-    <span class="ded-orbit" aria-hidden="true"><span class="jup"></span><i></i></span>
-    <div><div class="ded-k">DEDICATORIA</div><div class="ded-t">Para Júpiter</div><div class="ded-f">de Fel</div></div>
-  </section>
 
   <section class="auto" aria-label="Piloto automático">
     <span class="auto-t">PILOTO AUTOMÁTICO</span>
@@ -465,9 +489,11 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
       <div class="st-row"><span class="st-k">OCTAVA</span><button class="mini" id="kbOctDn" aria-label="Bajar octava">−</button><output id="kbOctO" class="kout">3</output><button class="mini" id="kbOctUp" aria-label="Subir octava">+</button></div>
       <label class="st-row"><span class="st-k">MODO</span><select id="kbMode"><option value="n">Notas</option><option value="M">Acorde mayor</option><option value="m">Acorde menor</option></select></label>
       <button class="tog" id="kbSus" aria-pressed="false">SOSTENER</button>
+      <label class="st-row"><span class="st-k">TECLAS</span><select id="kbSize"><option value="s">Sencillo</option><option value="c">Completo</option></select></label>
+      <button class="tog" id="kbFull" aria-pressed="false">GIRAR / PANTALLA</button>
       <button class="tog" id="kbKeys" aria-pressed="false">TECLAS DE LA COMPU</button>
     </div>
-    <div class="kb-ctl">
+    <div class="kb-ctl kb-ctl2">
       <label class="master"><span>VOLUMEN</span><input type="range" id="kbVol" min="0" max="1.2" step="0.01" value="0.8"><output id="kbVolO">80%</output></label>
       <label class="master"><span>ESPACIO</span><input type="range" id="kbRevAmt" min="0" max="1" step="0.01" value="0.3"><output id="kbRevO">30%</output></label>
     </div>
@@ -620,7 +646,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
     <div class="live-row"><button class="live-gear" id="liveGear" aria-label="Opciones de grabación" aria-expanded="false">AJUST</button><button class="live-fab" id="liveBtn"><span class="dot" aria-hidden="true"></span><span id="liveLbl">GRABAR MI VOZ</span></button></div>
   </div>
   
-<footer>De Fel para Júpiter · Hecho por @cybercadtm</footer>
+<footer><span class="ded-foot">Para Júpiter · de Fel</span><span>Hecho por @cybercadtm</span></footer>
   <div class="upd" id="updBar" hidden role="status"><span>Hay una versión nueva de la Cabina.</span><button class="mini" id="updBtn">ACTUALIZAR</button><button class="mini" id="updLater">DESPUÉS</button></div>
 
   <div class="party" id="party" hidden role="dialog" aria-modal="true" aria-label="Modo fiesta">
@@ -713,7 +739,9 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
       <ul>
         <li>El botón <b>TECLADO</b> de arriba lo muestra u oculta; <b>OCULTAR</b> también lo esconde.</li>
         <li><b>SONIDO</b>: Piano, Órgano, Sintetizador, Pad espacial, Bajo, Campanas y 8 bits.</li>
-        <li><b>OCTAVA − / +</b> mueve el teclado a notas más graves o más agudas. En teléfono se ve una octava; en pantallas anchas, dos.</li>
+        <li><b>OCTAVA − / +</b> mueve el teclado a notas más graves o más agudas.</li>
+        <li><b>TECLAS</b>: <b>Sencillo</b> muestra una octava en teléfono (dos en pantallas anchas), con teclas grandes. <b>Completo</b> muestra de dos a cuatro octavas, según el espacio.</li>
+        <li><b>GIRAR / PANTALLA</b> pone el teclado en pantalla completa y acostado para aprovechar todo el teléfono. Si tu teléfono no se puede girar solo, el teclado se gira en la pantalla: voltea el teléfono de lado. <b>SALIR</b> regresa.</li>
         <li><b>MODO</b>: Notas toca una sola; Acorde mayor o menor toca el acorde completo con una tecla, ideal para acompañar.</li>
         <li><b>SOSTENER</b> deja sonar las notas al soltar, como el pedal del piano. Tócalo otra vez para soltarlas.</li>
         <li><b>ESPACIO</b> agrega reverberación y <b>VOLUMEN</b> ajusta solo el teclado.</li>
@@ -722,7 +750,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>Lo que toques también queda en <b>GRABAR MEZCLA</b> del Estudio de voz.</li>
       </ul>
       <h3>Vista</h3>
-      <p><b>AJUSTAR SECCIONES</b> abre la barra <b>VER</b> para mostrar u ocultar cada sección dentro del modo actual. <b>TODO</b> muestra todo y <b>MÍNIMO</b> deja lo básico del modo. Cada modo guarda su propio ajuste.</p>
+      <p>Todos los atajos (skin, secciones, teclado, modo fiesta, manual) están en el botón <b>MENÚ</b> de arriba, para que la cabecera ocupe poco. <b>SECCIONES</b> abre la barra <b>VER</b> para mostrar u ocultar cada parte. La Cabina siempre abre en <b>MÍNIMO</b>; <b>NORMAL</b> muestra lo de siempre del modo y <b>TODO</b> muestra todo.</p>
       <h3>Pads de efectos</h3>
       <ul>
         <li>Son 12 pads para tus propios sonidos: aplausos, risas, gritos, lo que quieras. Toca un pad vacío y elige el archivo.</li>
@@ -745,7 +773,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>También puedes marcar desde <b>PANTALLA GRANDE</b>: toca la letra en el Modo fiesta.</li>
       </ul>
       <h3>Modo fiesta</h3>
-      <p>El botón <b>MODO FIESTA</b> llena la pantalla con Júpiter, sus lunas y luces que se mueven con la música, más la letra en grande. <b>LUCES</b> y <b>LETRAS</b> se prenden o apagan, <b>APLAUDIR</b> suma al aplausómetro y <b>SALIR</b> (o Esc) regresa a la consola. Las luces cambian suave, sin destellos bruscos.</p>
+      <p><b>MENÚ › MODO FIESTA</b> llena la pantalla con Júpiter, sus lunas y luces que se mueven con la música, más la letra en grande. <b>LUCES</b> y <b>LETRAS</b> se prenden o apagan, <b>APLAUDIR</b> suma al aplausómetro y <b>SALIR</b> (o Esc) regresa a la consola. Las luces cambian suave, sin destellos bruscos.</p>
       <h3>Karaoke de YouTube</h3>
       <ul>
         <li>Escribe la canción y toca <b>BUSCAR KARAOKE</b>: se abre YouTube con la búsqueda y la palabra karaoke.</li>
@@ -847,7 +875,7 @@ body:not([data-mode=karaoke]) .livebox:not(.on){display:none}
         <li>Para videos, MP4 en 720p es lo más ligero y se ve bien.</li>
         <li>Las canciones demo solo aparecen mientras no tengas canciones tuyas, para que la Cabina abra más rápido.</li>
       </ul>
-      <p class="sign">Cabina Júpiter · De Fel para Júpiter · @cybercadtm</p>
+      <p class="sign">Cabina Júpiter · Para Júpiter, de Fel · @cybercadtm</p>
     </div>
   </div>
 </div>
@@ -1732,12 +1760,12 @@ const SOUNDS={
 const kbComp=ctx.createDynamicsCompressor();kbComp.threshold.value=-14;kbComp.knee.value=8;kbComp.ratio.value=6;kbComp.attack.value=.004;kbComp.release.value=.2;
 const kbOut=kG(.64),kbDry=kG(1),kbSend=kG(1),kbWet=kG(.3),kbRev=ctx.createConvolver();kbRev.buffer=conv.buffer;
 kbDry.connect(kbOut);kbSend.connect(kbRev);kbRev.connect(kbWet);kbWet.connect(kbOut);kbOut.connect(kbComp);kbComp.connect(stLim);
-const kb={oct:3,sound:'piano',mode:'n',sus:false,keysOn:false,nOct:0,active:new Map(),held:[],press:{},ptr:new Map()};
+const kb={oct:3,sound:'piano',mode:'n',size:'s',sus:false,keysOn:false,nOct:0,active:new Map(),held:[],press:{},ptr:new Map()};
 const kbEl=$('#kb'),kbSound=$('#kbSound');
 for(const k in SOUNDS){const o=document.createElement('option');o.value=k;o.textContent=SOUNDS[k].n;kbSound.appendChild(o)}
-try{const sv=JSON.parse(localStorage.getItem('cabina-kb')||'{}');if(SOUNDS[sv.sound])kb.sound=sv.sound;if(sv.oct>=1&&sv.oct<=6)kb.oct=sv.oct;if(['n','M','m'].includes(sv.mode))kb.mode=sv.mode}catch(_){}
+try{const sv=JSON.parse(localStorage.getItem('cabina-kb')||'{}');if(SOUNDS[sv.sound])kb.sound=sv.sound;if(sv.oct>=1&&sv.oct<=6)kb.oct=sv.oct;if(['n','M','m'].includes(sv.mode))kb.mode=sv.mode;if(sv.size==='c')kb.size='c'}catch(_){}
 kbSound.value=kb.sound;$('#kbMode').value=kb.mode;$('#kbOctO').textContent=kb.oct;
-const kbSave=()=>{try{localStorage.setItem('cabina-kb',JSON.stringify({sound:kb.sound,oct:kb.oct,mode:kb.mode}))}catch(_){}};
+const kbSave=()=>{try{localStorage.setItem('cabina-kb',JSON.stringify({sound:kb.sound,oct:kb.oct,mode:kb.mode,size:kb.size}))}catch(_){}};
 function makeVoice(m){const S=SOUNDS[kb.sound],f=440*Math.pow(2,(m-69)/12),t=ctx.currentTime,o=ctx.createGain(),sg=kG(S.send);
   o.gain.setValueAtTime(0,t);o.gain.linearRampToValueAtTime(S.peak,t+S.a);o.gain.setTargetAtTime(S.peak*S.s,t+S.a,S.d);
   o.connect(kbDry);o.connect(sg);sg.connect(kbSend);const oscs=S.build(f,t,o);oscs.forEach(x=>x.start(t));let done=false;
@@ -1753,7 +1781,9 @@ function kbAllOff(){for(const src of [...kb.active.keys()])noteOff(src);kb.ptr.c
 const NAMES={0:'Do',2:'Re',4:'Mi',5:'Fa',7:'Sol',9:'La',11:'Si'};
 const KCODES=['KeyZ','KeyS','KeyX','KeyD','KeyC','KeyV','KeyG','KeyB','KeyH','KeyN','KeyJ','KeyM','KeyQ','Digit2','KeyW','Digit3','KeyE','KeyR','Digit5','KeyT','Digit6','KeyY','Digit7','KeyU','KeyI'];
 const kHint=c=>c.replace(/^Key|^Digit/,'');
-function buildKb(force){const wrapW=kbEl.parentElement.clientWidth;if(!wrapW)return;const n=wrapW<600?1:2;if(!force&&n===kb.nOct)return;kbAllOff();kb.nOct=n;
+function kbOcts(w){if(kb.size==='c')return Math.max(2,Math.min(4,Math.floor(w/(7*26))));return w<600?1:2}
+function buildKb(force){const wrapW=kbEl.parentElement.clientWidth;if(!wrapW)return;const n=kbOcts(wrapW);if(!force&&n===kb.nOct)return;kbAllOff();kb.nOct=n;
+  if(kb.oct+n>7){kb.oct=Math.max(1,7-n);$('#kbOctO').textContent=kb.oct}$('#kbSec').classList.toggle('big',kb.size==='c');
   kbEl.innerHTML='';const N=n*12,whites=[];for(let sm=0;sm<=N;sm++)if(NAMES[sm%12]!==undefined)whites.push(sm);const W=whites.length,bw=.62*100/W;
   for(let sm=0;sm<=N;sm++){const el=document.createElement('div');el.dataset.s=sm;const hint=kb.keysOn&&KCODES[sm]?kHint(KCODES[sm]):'';
     if(NAMES[sm%12]!==undefined){el.className='kw';const nm=document.createElement('span');nm.textContent=NAMES[sm%12]+(sm%12===0?(kb.oct+Math.floor(sm/12)):'');el.appendChild(nm)}
@@ -1791,7 +1821,19 @@ window.addEventListener('keydown',e=>{if(!kbLive()||e.ctrlKey||e.metaKey||e.altK
 window.addEventListener('keyup',e=>{if(e.code==='Space'&&kb.spaceSus){kb.spaceSus=false;setSus(false);e.preventDefault();return}
   if(kb.active.has('k'+e.code)){e.preventDefault();noteOff('k'+e.code)}},true);
 window.addEventListener('blur',kbAllOff);
-window.addEventListener('resize',()=>{if(!$('#kbSec').hidden)buildKb(false)});
+window.addEventListener('resize',()=>{if(kbFull.on)kbFullLayout();if(!$('#kbSec').hidden)buildKb(false)});
+$('#kbSize').value=kb.size;$('#kbSize').onchange=e=>{kb.size=e.target.value;kbSave();buildKb(true);status(kb.size==='c'?'Teclado completo: más octavas. Gíralo para que quepan mejor.':'Teclado sencillo.')};
+const kbFull={on:false,locked:false};
+function kbFullLayout(){const sec=$('#kbSec');sec.classList.toggle('rot',kbFull.on&&!kbFull.locked&&innerHeight>innerWidth);requestAnimationFrame(()=>buildKb(true))}
+async function kbFullSet(on){const sec=$('#kbSec');kbAllOff();kbFull.on=on;sec.classList.toggle('full',on);$('#kbFull').setAttribute('aria-pressed',String(on));$('#kbFull').textContent=on?'SALIR':'GIRAR / PANTALLA';
+  document.body.classList.toggle('lock',on);kbFull.locked=false;
+  if(on){try{if(document.documentElement.requestFullscreen&&!document.fullscreenElement)await document.documentElement.requestFullscreen()}catch(_){}
+    try{if(screen.orientation&&screen.orientation.lock){await screen.orientation.lock('landscape');kbFull.locked=true}}catch(_){}}
+  else{try{if(screen.orientation&&screen.orientation.unlock)screen.orientation.unlock()}catch(_){}try{if(document.fullscreenElement)await document.exitFullscreen()}catch(_){}}
+  kbFullLayout()}
+$('#kbFull').onclick=()=>kbFullSet(!kbFull.on);
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&kbFull.on)kbFullSet(false)});
+document.addEventListener('fullscreenchange',()=>{if(!document.fullscreenElement&&kbFull.on&&kbFull.locked)kbFullSet(false)});
 
 /* ---------- Karaoke de YouTube ---------- */
 var ytList=[];try{ytList=JSON.parse(localStorage.getItem('cabina-yt')||'[]')||[]}catch(_){ytList=[]}
@@ -1852,6 +1894,13 @@ $('#hsClear').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.a
   delete b.dataset.ask;b.textContent='BORRAR HISTORIAL';hist=[];saveHist();renderHist();status('Historial borrado.')};
 renderHist();setInterval(renderHist,60000);
 
+/* ---------- Menú de la cabecera ---------- */
+function menuShow(v){$('#menuPop').hidden=!v;$('#menuBtn').setAttribute('aria-expanded',String(v))}
+$('#menuBtn').onclick=e=>{e.stopPropagation();menuShow($('#menuPop').hidden)};
+document.addEventListener('click',e=>{if(!$('#menuPop').hidden&&!e.target.closest('.menu-wrap'))menuShow(false)});
+$('#menuPop').addEventListener('click',e=>{const b=e.target.closest('button');if(b&&b.id!=='vToggle'&&b.id!=='kbBtn')menuShow(false)});
+document.addEventListener('keydown',e=>{if(e.key==='Escape')menuShow(false)});
+
 /* ---------- Video de YouTube dentro de la página ---------- */
 var yt={p:null,vid:null,wait:[],loading:false};
 function ytApi(){return new Promise((res,rej)=>{if(window.YT&&YT.Player)return res(YT);yt.wait.push({res,rej});if(yt.loading)return;yt.loading=true;
@@ -1871,14 +1920,12 @@ function ytErr(e){const c=e.data;status(c===101||c===150||c===153?'Este video no
 $('#ytClose').onclick=()=>{try{if(yt.p&&yt.p.stopVideo)yt.p.stopVideo()}catch(_){}$('#ytStage').hidden=true};
 
 /* ---------- Modos y vista ---------- */
-const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['hist','Historial','.hist'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib'],['dedic','Dedicatoria','.dedic']];
-const MODE_DEF={dj:['console','auto','fx','lib','dedic'],karaoke:['console','yt','lyr','queue','clap','hist','msgs','studio','lib','dedic'],player:['player','lib','dedic']};
-const MODE_MIN={dj:['console','lib','dedic'],karaoke:['console','yt','queue','lib','dedic'],player:['player','lib','dedic']};
+const VIEW=[['console','Consola','main.console'],['player','Reproductor','#plSec'],['kb','Teclado','#kbSec'],['auto','Piloto','.auto'],['fx','Efectos','.fx'],['lyr','Letras','.lyr'],['yt','YouTube','.yt'],['queue','Cola','.queue'],['clap','Aplausos','.clap'],['hist','Historial','.hist'],['msgs','Mensajes','.msgs'],['studio','Estudio','.studio'],['lib','Repertorio','.lib']];
+const MODE_DEF={dj:['console','auto','fx','lib'],karaoke:['console','yt','lyr','queue','clap','hist','msgs','studio','lib'],player:['player','lib']};
+const MODE_MIN={dj:['console','lib'],karaoke:['console','yt','queue','lib'],player:['player','lib']};
 const MODE_NAME={dj:'DJ',karaoke:'Karaoke',player:'Reproductor'};
-const defView=m=>{const v={};VIEW.forEach(([k])=>v[k]=MODE_DEF[m].includes(k));return v};
+const defView=m=>{const v={};VIEW.forEach(([k])=>v[k]=MODE_MIN[m].includes(k));return v};
 let views={dj:defView('dj'),karaoke:defView('karaoke'),player:defView('player')},mode='dj';
-try{const sv=JSON.parse(localStorage.getItem('cabina-views')||'{}');for(const m in views)if(sv[m])for(const k in views[m])if(k in sv[m]&&k!=='kb')views[m][k]=!!sv[m][k]}catch(_){}
-try{if(!localStorage.getItem('cabina-yt-seen')){views.karaoke.yt=true;localStorage.setItem('cabina-yt-seen','1')}}catch(_){}
 try{const m=localStorage.getItem('cabina-mode');if(MODE_DEF[m])mode=m}catch(_){}
 const chips=$('#viewChips');
 VIEW.forEach(([k,lbl,sel])=>{const b=document.createElement('button');b.className='vt';b.dataset.v=k;b.textContent=lbl;
@@ -1894,10 +1941,11 @@ function setMode(m){if(!MODE_DEF[m]||m===mode)return;mode=m;
   else plPause();
   applyView();renderList();status(`Modo ${MODE_NAME[m]}`)}
 document.querySelectorAll('.mode').forEach(b=>b.onclick=()=>setMode(b.dataset.mode));
-$('#vToggle').onclick=e=>{const bar=$('#viewBar'),open=bar.hidden;bar.hidden=!open;e.currentTarget.setAttribute('aria-expanded',String(open));e.currentTarget.textContent=open?'CERRAR AJUSTES':'AJUSTAR SECCIONES'};
+$('#vToggle').onclick=e=>{const bar=$('#viewBar'),open=bar.hidden;bar.hidden=!open;e.currentTarget.setAttribute('aria-expanded',String(open));e.currentTarget.textContent=open?'OCULTAR SECCIONES':'SECCIONES';menuShow(false)};
+$('#vNormal').onclick=()=>{VIEW.forEach(([k])=>views[mode][k]=MODE_DEF[mode].includes(k));applyView()};
 $('#vAll').onclick=()=>{VIEW.forEach(([k])=>views[mode][k]=true);applyView()};
 $('#vMin').onclick=()=>{VIEW.forEach(([k])=>views[mode][k]=MODE_MIN[mode].includes(k));applyView()};
-const toggleKb=on=>{views[mode].kb=on;applyView();if(on)$('#kbSec').scrollIntoView({behavior:'smooth',block:'nearest'})};
+const toggleKb=on=>{if(!on&&kbFull.on)kbFullSet(false);views[mode].kb=on;applyView();menuShow(false);if(on)$('#kbSec').scrollIntoView({behavior:'smooth',block:'nearest'})};
 $('#kbBtn').onclick=()=>toggleKb(!views[mode].kb);$('#kbHide').onclick=()=>toggleKb(false);
 
 /* ---------- Archivos como enlaces para reproducir ---------- */
