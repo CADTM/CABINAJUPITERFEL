@@ -449,6 +449,7 @@ body.guestmode>*:not(#guest){display:none!important}
 .g-foot{margin:0;text-align:center;font-family:var(--f-disp);font-size:11px;letter-spacing:.2em;color:var(--muted)}
 .tv-qr{position:absolute;right:24px;top:70px;z-index:3;display:grid;gap:6px;justify-items:center;padding:10px;border-radius:12px;background:rgba(0,0,0,.6);font-family:var(--f-disp);font-size:12px;letter-spacing:.12em}
 .tv-qr #tvQrC{background:#fff6e8;padding:6px;border-radius:8px}
+.g-fs{height:40px;border-radius:12px;border:1px solid var(--line-hi);background:transparent;color:var(--muted);font-family:var(--f-mono);font-size:12px;letter-spacing:.08em}
 [hidden]{display:none!important}
 </style>
 
@@ -961,7 +962,7 @@ body.guestmode>*:not(#guest){display:none!important}
 (()=>{
 const $=(s,r=document)=>r.querySelector(s);
 if(new URLSearchParams(location.search).has('pantalla')){tvMain();return}
-if(new URLSearchParams(location.search).has('invitado')){guestMain();return}
+if(new URLSearchParams(location.search).has('invitado')||(()=>{try{return sessionStorage.getItem('cabina-invitado')}catch(_){return null}})()){guestMain();return}
 const css=n=>getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const C={a:css('--a'),b:css('--b'),cue:css('--cue'),ok:css('--ok'),fg:css('--fg'),muted:css('--muted'),line:css('--line'),well:css('--well'),bg:css('--bg')};
 const clamp=(v,a,b)=>Math.min(b,Math.max(a,v));
@@ -2449,15 +2450,17 @@ $('#gOn').onclick=e=>{gst.on=!gst.on;e.currentTarget.setAttribute('aria-pressed'
 $('#gNew').onclick=()=>{gst.topic=gTopic(true);gConnect();status('Código nuevo: el anterior ya no funciona.')};
 $('#gCopy').onclick=async()=>{try{await navigator.clipboard.writeText(gst.url);status('Enlace copiado.')}catch(_){status('Copia el enlace: '+gst.url)}};
 
-function guestMain(){const topic=new URLSearchParams(location.search).get('invitado')||'';document.title='Anótate · Cabina Júpiter';document.body.classList.add('guestmode');
+function guestMain(){let topic=new URLSearchParams(location.search).get('invitado')||'';try{if(topic)sessionStorage.setItem('cabina-invitado',topic);else topic=sessionStorage.getItem('cabina-invitado')||''}catch(_){}
+  try{history.replaceState(null,'',location.pathname)}catch(_){}document.title='Anótate · Cabina Júpiter';document.body.classList.add('guestmode');
   const g=document.createElement('div');g.id='guest';
   g.innerHTML='<div class="g-card"><div class="brand"><span class="jup" aria-hidden="true"></span><span class="logo">CABINA JÚPITER</span></div><h1>Anótate para cantar</h1>'+
    '<form id="gf"><label>Tu nombre<input id="gn" maxlength="40" autocomplete="name" required></label><label>Canción<input id="gs" maxlength="100" placeholder="Ej. Amor eterno" required></label>'+
    '<a class="g-yt" id="gsy" target="_blank" rel="noopener" href="https://www.youtube.com/results?search_query=karaoke">Buscar el karaoke en YouTube</a>'+
    '<label>Enlace de YouTube (opcional)<input id="gy" maxlength="200" inputmode="url" placeholder="Pega aquí el enlace del karaoke"></label><button class="g-send" id="gb">ANOTARME</button><p class="g-msg" id="gm" role="status"></p></form>'+
-   '<p class="g-foot">Para Júpiter · de Fel · @cybercadtm</p></div>';
+   '<button class="g-fs" id="gfs" type="button" hidden>VER EN PANTALLA COMPLETA</button><p class="g-foot">Para Júpiter · de Fel · @cybercadtm</p></div>';
   document.body.appendChild(g);const q=x=>g.querySelector(x);
   try{q('#gn').value=localStorage.getItem('cabina-guest-name')||''}catch(_){}
+  const fsB=q('#gfs');if(document.documentElement.requestFullscreen){fsB.hidden=false;fsB.onclick=()=>{try{const r=document.documentElement.requestFullscreen({navigationUI:'hide'});if(r&&r.catch)r.catch(()=>{})}catch(_){}};document.addEventListener('fullscreenchange',()=>{fsB.hidden=!!document.fullscreenElement})}
   q('#gs').oninput=e=>{q('#gsy').href='https://www.youtube.com/results?search_query='+encodeURIComponent((e.target.value.trim()?e.target.value.trim()+' ':'')+'karaoke')};
   if(!/^cabina-[a-z0-9]{12,32}$/.test(topic)){q('#gm').textContent='Este código no es válido. Pide que te muestren el código otra vez.';q('#gb').disabled=true}
   q('#gf').onsubmit=async e=>{e.preventDefault();const n=q('#gn').value.trim(),s=q('#gs').value.trim(),y=q('#gy').value.trim();if(!n||!s)return;
