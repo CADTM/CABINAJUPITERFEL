@@ -372,6 +372,15 @@ footer{display:grid;gap:4px;justify-items:center;padding-block:10px 4px}
 .kbsec.big .kw{min-width:20px;font-size:10px}
 .kbsec.big .kbk{font-size:8px}
 #kbFull[aria-pressed=true]{border-color:var(--a);background:color-mix(in srgb,var(--a) 26%,var(--panel2))}
+.lib-filter{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px 12px}
+.seg{display:inline-flex;flex-wrap:wrap;gap:3px;padding:3px;border-radius:16px;border:1px solid var(--line);background:var(--well)}
+.segb{height:30px;padding:0 12px;border-radius:999px;border:0;background:transparent;color:var(--muted);font-family:var(--f-mono);font-size:11px;letter-spacing:.06em}
+.segb[aria-pressed=true]{background:color-mix(in srgb,var(--a) 28%,var(--panel2));color:var(--fg)}
+.segb .n{opacity:.7;margin-left:4px}
+#libSort{height:34px;border-radius:8px;border:1px solid var(--line);background:var(--well);color:var(--fg);font:inherit;padding:0 8px}
+.t-act .fav{width:34px;height:34px;padding:0;font-size:17px;color:var(--muted)}
+.t-act .fav[aria-pressed=true]{color:var(--a);border-color:var(--a);box-shadow:0 0 10px color-mix(in srgb,var(--a) 35%,transparent)}
+.t-meta .vid-tag{color:var(--b)}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -649,6 +658,10 @@ body.guestmode>*:not(#guest){display:none!important}
       <label class="btn primary" for="files">Cargar canciones o videos</label>
       <input type="search" id="q" placeholder="Buscar en tu repertorio" aria-label="Buscar canción">
     </div>
+    <div class="lib-filter">
+      <div class="seg" role="group" aria-label="Mostrar"><button class="segb" data-f="all" aria-pressed="true">TODO</button><button class="segb" data-f="audio">CANCIONES</button><button class="segb" data-f="video">VIDEOS</button><button class="segb" data-f="fav">★ FAVORITAS</button></div>
+      <label class="st-row"><span class="st-k">ORDENAR</span><select id="libSort"><option value="new">Recientes</option><option value="az">Nombre A-Z</option><option value="top">Más cantadas</option><option value="fav">Favoritas primero</option></select></label>
+    </div>
     <div class="lib-tools">
       <select id="listSel" aria-label="Ver lista"></select>
       <button class="tog" id="listNew">NUEVA LISTA</button><button class="tog" id="listEdit" aria-pressed="false" hidden>EDITAR LISTA</button><button class="tog" id="listDel" hidden>BORRAR LISTA</button>
@@ -862,6 +875,9 @@ body.guestmode>*:not(#guest){display:none!important}
       </ol>
       <h3>Repertorio</h3>
       <ul>
+        <li><b>TODO</b>, <b>CANCIONES</b>, <b>VIDEOS</b> y <b>★ FAVORITAS</b> separan lo que ves; cada botón dice cuántas hay.</li>
+        <li><b>ORDENAR</b>: Recientes, Nombre A-Z, Más cantadas o Favoritas primero. El número ×3 indica cuántas veces se ha tocado.</li>
+        <li>Toca <b>☆</b> para marcar una favorita (se pone ★). Las favoritas entran en el respaldo.</li>
         <li>Tus archivos se guardan en este navegador y siguen ahí al volver. No se suben a ningún lado.</li>
         <li>En otro teléfono o navegador hay que cargarlos otra vez.</li>
         <li>Busca por nombre. <b>Quitar</b> pide un segundo toque para confirmar.</li>
@@ -1282,23 +1298,35 @@ function openDB(){return new Promise((res,rej)=>{try{const r=indexedDB.open('cab
 function store(mode,fn){return new Promise((res,rej)=>{const t=db.transaction('tracks',mode);const req=fn(t.objectStore('tracks'));t.oncomplete=()=>res(req&&req.result);t.onerror=()=>rej(t.error);t.onabort=()=>rej(t.error)})}
 const norm=s=>s.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'');
 const mb=n=>(n/1048576).toFixed(1)+' MB';
+let favs=new Set();try{favs=new Set(JSON.parse(localStorage.getItem('cabina-favs')||'[]'))}catch(_){}
+const libView={f:'all',s:'new'};try{Object.assign(libView,JSON.parse(localStorage.getItem('cabina-libview')||'{}'))}catch(_){}
+function saveFavs(){try{localStorage.setItem('cabina-favs',JSON.stringify([...favs]))}catch(_){}}
+function playCounts(){const m=new Map(),h=(typeof hist!=='undefined'&&hist)||[];for(const x of h)if(x.id)m.set(x.id,(m.get(x.id)||0)+1);return m}
+document.querySelectorAll('.segb').forEach(b=>b.onclick=()=>{libView.f=b.dataset.f;try{localStorage.setItem('cabina-libview',JSON.stringify(libView))}catch(_){}renderList()});
+$('#libSort').value=libView.s;$('#libSort').onchange=e=>{libView.s=e.target.value;try{localStorage.setItem('cabina-libview',JSON.stringify(libView))}catch(_){}renderList()};
 function renderList(){renderLists();renderQSongs();const lst=curList();
+  const nA=lib.filter(e=>!isVid(e)).length,nV=lib.filter(e=>isVid(e)).length,nF=lib.filter(e=>favs.has(e.id)).length;
+  document.querySelectorAll('.segb').forEach(b=>{const f=b.dataset.f;b.setAttribute('aria-pressed',String(f===libView.f));const lbl={all:'TODO',audio:'CANCIONES',video:'VIDEOS',fav:'★ FAVORITAS'}[f],n={all:lib.length,audio:nA,video:nV,fav:nF}[f];b.innerHTML='';b.append(lbl);const sp=document.createElement('span');sp.className='n';sp.textContent=n;b.append(sp)});
   const qq=norm(q.value.trim());let items=lib.filter(e=>!qq||norm(e.name).includes(qq));if(lst&&!listEdit)items=items.filter(e=>lst.ids.includes(e.id));
+  if(libView.f==='audio')items=items.filter(e=>!isVid(e));else if(libView.f==='video')items=items.filter(e=>isVid(e));else if(libView.f==='fav')items=items.filter(e=>favs.has(e.id));
+  const pc=playCounts(),az=(a,b)=>a.name.localeCompare(b.name,'es',{sensitivity:'base'}),rec=(a,b)=>(b.demo?0:1)-(a.demo?0:1)||(b.added||0)-(a.added||0);
+  if(!lst||listEdit)items.sort(libView.s==='az'?az:libView.s==='top'?(a,b)=>(pc.get(b.id)||0)-(pc.get(a.id)||0)||az(a,b):libView.s==='fav'?(a,b)=>(favs.has(b.id)?1:0)-(favs.has(a.id)?1:0)||rec(a,b):rec);
   const mine=lib.filter(e=>!e.demo).length;const dm=lib.filter(e=>e.demo).length;$('#libCount').textContent=`${mine} ${mine===1?'canción tuya':'canciones tuyas'}${dm?` · ${dm} demos`:''}`;
   list.innerHTML='';
-  if(!items.length){const li=document.createElement('li');li.className='empty';li.textContent=qq?'Nada coincide con tu búsqueda.':lst?'Esta lista está vacía. Toca EDITAR LISTA para agregar canciones.':'Carga tus canciones con el botón de arriba.';list.appendChild(li);return}
+  if(!items.length){const li=document.createElement('li');li.className='empty';li.textContent=qq?'Nada coincide con tu búsqueda.':libView.f==='video'?'No tienes videos en el repertorio.':libView.f==='audio'?'No tienes canciones de audio todavía.':libView.f==='fav'?'Todavía no marcas favoritas: toca ☆ en una canción.':lst?'Esta lista está vacía. Toca EDITAR LISTA para agregar canciones.':'Carga tus canciones con el botón de arriba.';list.appendChild(li);return}
   for(const e of items){
     const li=document.createElement('li');li.dataset.id=e.id;
     const info=document.createElement('div');info.className='t-info';
     const nm=document.createElement('div');nm.className='t-name';nm.textContent=e.name;
     const meta=document.createElement('div');meta.className='t-meta';
     const parts=e.demo?[`DEMO`,`${e.bpm} BPM`,fmtR(e.buffer.duration).slice(1)]:[(isVid(e)?'VIDEO ':'')+e.ext.toUpperCase(),mb(e.size),e.session?'solo esta sesión':''];
-    parts.filter(Boolean).forEach(p=>{const s=document.createElement('span');s.textContent=p;meta.appendChild(s)});
+    const nPl=pc.get(e.id);if(nPl)parts.push(`×${nPl}`);
+    parts.filter(Boolean).forEach((p,k)=>{const s=document.createElement('span');s.textContent=p;if(k===0&&isVid(e))s.className='vid-tag';meta.appendChild(s)});
     for(const L of ['A','B'])if(decks[L].trackId===e.id){const s=document.createElement('span');s.className='on-'+L.toLowerCase();s.textContent='EN '+L;meta.appendChild(s)}
     info.append(nm,meta);
     const act=document.createElement('div');act.className='t-act';
     const pvOn=!!pv&&pv.id===e.id,plOn=!!pl&&pl.id===e.id;if(plOn)li.classList.add('cur');
-    act.innerHTML=`<button class="mini pv" aria-pressed="${pvOn}">${pvOn?'■ PARAR':'▶ OÍR'}</button><button class="mini plb" aria-pressed="${plOn}">${plOn?'SONANDO':'▶ TOCAR'}</button><button class="ld" data-to="A" aria-label="Cargar en deck A">A</button><button class="ld" data-to="B" aria-label="Cargar en deck B">B</button>`+(lst&&listEdit?`<button class="mini lt" aria-pressed="${lst.ids.includes(e.id)}">${lst.ids.includes(e.id)?'EN LISTA':'AGREGAR'}</button>`:'')+(e.demo?'':`<button class="mini rm">Quitar</button>`);
+    const fv=favs.has(e.id);act.innerHTML=`<button class="mini fav" aria-pressed="${fv}" aria-label="${fv?'Quitar de favoritas':'Marcar como favorita'}">${fv?'★':'☆'}</button><button class="mini pv" aria-pressed="${pvOn}">${pvOn?'■ PARAR':'▶ OÍR'}</button><button class="mini plb" aria-pressed="${plOn}">${plOn?'SONANDO':'▶ TOCAR'}</button><button class="ld" data-to="A" aria-label="Cargar en deck A">A</button><button class="ld" data-to="B" aria-label="Cargar en deck B">B</button>`+(lst&&listEdit?`<button class="mini lt" aria-pressed="${lst.ids.includes(e.id)}">${lst.ids.includes(e.id)?'EN LISTA':'AGREGAR'}</button>`:'')+(e.demo?'':`<button class="mini rm">Quitar</button>`);
     li.append(info,act);list.appendChild(li);
   }
 }
@@ -1308,9 +1336,10 @@ list.addEventListener('click',async ev=>{
   if(b.classList.contains('pv')){pvToggle(e);return}
   if(b.classList.contains('plb')){plPlayTrack(e);return}
   if(b.classList.contains('lt')){const l=curList();if(!l)return;const k=l.ids.indexOf(e.id);if(k>=0)l.ids.splice(k,1);else l.ids.push(e.id);saveLists();renderList();return}
+  if(b.classList.contains('fav')){if(favs.has(e.id))favs.delete(e.id);else favs.add(e.id);saveFavs();renderList();return}
   if(b.classList.contains('rm')){
     if(!b.classList.contains('ask')){b.classList.add('ask');b.textContent='¿Quitar?';setTimeout(()=>{if(b.isConnected){b.classList.remove('ask');b.textContent='Quitar'}},3000);return}
-    lib.splice(lib.indexOf(e),1);if(db&&!e.session){try{await store('readwrite',s=>s.delete(id))}catch(_){}}
+    lib.splice(lib.indexOf(e),1);if(favs.delete(e.id))saveFavs();if(db&&!e.session){try{await store('readwrite',s=>s.delete(id))}catch(_){}}
     status(`Quitaste "${e.name}" del repertorio`);renderList()}
 });
 q.oninput=renderList;
@@ -1777,7 +1806,7 @@ async function readZip(blob){const tail=new DataView(await blob.slice(Math.max(0
   return out}
 async function exportBackup(full){if(!st.dl){status('Exportar el respaldo solo funciona al abrir la página en claude.ai.');return}
   status(full?'Preparando respaldo completo; puede tardar si tienes muchas canciones…':'Preparando respaldo ligero…');
-  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList,hist};
+  try{const files=[],m={app:'cabina',v:1,date:new Date().toISOString(),tracks:[],pads:[],lists,queue,rank,lyrics:{},msgs,yt:ytList,hist,favs:[...favs]};
     for(const e of lib){if(e.demo)continue;const t={id:e.id,name:e.name,ext:e.ext,size:e.size,video:!!e.video,added:e.added};
       if(full&&e.blob){t.file='canciones/'+e.id+'.'+(e.ext||'bin');files.push({name:t.file,data:e.blob})}m.tracks.push(t)}
     for(const pd of pads)if(pd.buf&&pd.blob){const file='pads/pad'+pd.slot;m.pads.push({slot:pd.slot,name:pd.n,file});files.push({name:file,data:pd.blob})}
@@ -1797,6 +1826,7 @@ $('#importFile').onchange=async ev=>{const f=ev.target.files[0];ev.target.value=
     for(const l of m.lists||[])if(!lists.some(x=>x.id===l.id))lists.push(l);saveLists();
     if(!queue.length&&Array.isArray(m.queue)){queue=m.queue;saveQ();renderQ()}
     if(Array.isArray(m.rank)){rank=rank.concat(m.rank.filter(r=>!rank.some(x=>x.at===r.at))).sort((a,b)=>b.score-a.score).slice(0,10);try{localStorage.setItem('cabina-rank',JSON.stringify(rank))}catch(_){}renderRank()}
+    if(Array.isArray(m.favs)){m.favs.forEach(x=>favs.add(x));saveFavs()}
     if(Array.isArray(m.hist)){for(const h of m.hist)if(h&&!hist.some(x=>x.at===h.at&&x.song===h.song))hist.push(h);hist.sort((a,b)=>a.at-b.at);saveHist();renderHist()}
     if(Array.isArray(m.yt)){for(const y of m.yt)if(y&&y.vid&&!ytList.some(x=>x.vid===y.vid))ytList.push(y);saveYt();renderYt()}
     if(Array.isArray(m.msgs)){for(const x of m.msgs)if(!msgs.includes(x))msgs.push(x);saveMsgs();renderMsgs()}
