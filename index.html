@@ -403,6 +403,15 @@ footer{display:grid;gap:4px;justify-items:center;padding-block:10px 4px}
 .bt-row:nth-child(n+5) .bt-cell[aria-pressed=true]{background:linear-gradient(180deg,color-mix(in srgb,var(--b) 80%,#fff),var(--b));border-color:var(--b);box-shadow:0 0 10px color-mix(in srgb,var(--b) 45%,transparent)}
 .bt-cell.now{outline:2px solid var(--fg);outline-offset:-2px}
 @media (max-width:480px){.bt-grid{min-width:460px}.bt-row{grid-template-columns:62px repeat(16,minmax(0,1fr));gap:3px}.bt-name{font-size:9px;padding:0 4px}.bt-cell,.bt-name{height:34px}}
+.fs-box{display:grid;gap:8px;padding:10px 12px;border-radius:12px;border:1px solid color-mix(in srgb,var(--b) 40%,var(--line));background:color-mix(in srgb,var(--b) 6%,var(--panel2))}
+.fs-box select{height:34px;border-radius:8px;border:1px solid var(--line);background:var(--well);color:var(--fg);font:inherit;padding:0 8px}
+.fs-show{display:flex;flex-wrap:wrap;align-items:baseline;gap:6px 14px}
+.fs-k{font-family:var(--f-disp);font-size:10px;letter-spacing:.2em;color:var(--muted)}
+.fs-w{font-family:var(--f-disp);font-weight:900;font-size:clamp(24px,6vw,40px);letter-spacing:.06em;color:var(--b);text-shadow:0 0 18px color-mix(in srgb,var(--b) 50%,transparent);text-transform:uppercase;overflow-wrap:anywhere}
+.fs-w.pop{animation:pop .35s ease-out}
+.fs-t{margin-left:auto;font-family:var(--f-mono);font-size:26px;color:var(--a);font-variant-numeric:tabular-nums}
+.fs-t.end{color:var(--cue)}
+#fsRound[aria-pressed=true]{border-color:var(--cue);color:var(--cue)}
 .yt-stage{display:grid;gap:8px}
 .yt-frame{position:relative;width:100%;max-width:100%;aspect-ratio:16/9;background:#000;border-radius:10px;overflow:hidden;box-shadow:0 0 0 1px #ff4e4566,0 0 24px rgba(255,78,69,.18)}
 .yt-frame iframe,.yt-frame #ytPlayer{position:absolute;inset:0;width:100%;height:100%;border:0}
@@ -530,6 +539,12 @@ body.guestmode>*:not(#guest){display:none!important}
       <span class="st-k">PATRÓN</span><span class="bt-slots"><button class="bt-slot" data-s="0">A</button><button class="bt-slot" data-s="1">B</button><button class="bt-slot" data-s="2">C</button><button class="bt-slot" data-s="3">D</button></span>
       <label class="st-row"><span class="st-k">RITMO</span><select id="btPre"><option value="">Cargar ritmo…</option></select></label>
       <button class="mini" id="btClear">BORRAR</button>
+    </div>
+    <div class="fs-box">
+      <div class="bt-ctl"><span class="st-k">FREESTYLE</span><button class="tog" id="fsWordB">PALABRA</button>
+        <label class="st-row"><span class="st-k">CAMBIAR</span><select id="fsAuto"><option value="0">A mano</option><option value="4" selected>Cada 4 compases</option><option value="8">Cada 8 compases</option><option value="2">Cada 2 compases</option></select></label>
+        <button class="tog" id="fsRound" aria-pressed="false">RONDA</button><select id="fsLen" aria-label="Duración de la ronda"><option value="30">30 s</option><option value="60" selected>1 min</option><option value="90">1:30</option><option value="120">2 min</option></select></div>
+      <div class="fs-show" id="fsShow"><span class="fs-k">TEMA</span><span class="fs-w" id="fsW">Toca PALABRA</span><span class="fs-t" id="fsT"></span></div>
     </div>
     <div class="bt-wrap"><div class="bt-grid" id="btGrid"></div></div>
     <div class="bt-ctl">
@@ -806,7 +821,9 @@ body.guestmode>*:not(#guest){display:none!important}
       <ul>
         <li>Una caja de ritmos con 8 sonidos: bombo, tarola, palmas, hi-hat, hat abierto, tom, güiro y 808. Toca los cuadritos para prender o apagar cada golpe; son 16 pasos por compás.</li>
         <li><b>▶ TOCAR</b> arranca el ritmo, que suena encima de lo que esté en los decks y entra en las grabaciones.</li>
-        <li><b>RITMO</b> carga un patrón listo: House, Reggaetón, Cumbia, Hip-hop, Trap, Pop o Bachata. Luego lo puedes cambiar a tu gusto.</li>
+        <li><b>RITMO</b> carga un patrón listo, con su tempo y su swing. Hay tres grupos: <b>Freestyle</b> (Batalla, Boom bap clásico, Old school, Lo-fi, Trap de batalla, Drill, Corrido tumbado), <b>Fiesta</b> (House, Techno, Drum and bass, Funk carioca, Afrobeat, Pop, Rock) y <b>Latino</b> (Reggaetón, Cumbia, Bachata, Merengue, Salsa, Hip-hop, Trap). Luego lo puedes cambiar a tu gusto.</li>
+        <li><b>FREESTYLE</b>: <b>PALABRA</b> te da un tema al azar para rimar, como en las batallas. Con <b>CAMBIAR</b> la palabra cambia sola cada 2, 4 u 8 compases, justo al empezar el compás. En el Modo fiesta la palabra sale en grande.</li>
+        <li><b>RONDA</b> arranca el beat y una cuenta regresiva (30 s, 1, 1:30 o 2 minutos). Al terminar suena un remate y dice ¡TIEMPO!</li>
         <li><b>PATRÓN A, B, C, D</b> son cuatro memorias. Si cambias de patrón mientras suena, el cambio entra al empezar el siguiente compás, como en una caja de ritmos de verdad.</li>
         <li><b>SEGUIR</b>: con "Deck A", "Deck B" o "Lo que suena", los beats toman el BPM de esa canción y se acomodan a su tiempo. Con "Tempo propio" usas el BPM de aquí (− / + o TAP).</li>
         <li><b>SWING</b> le da sabor atrasando los contratiempos. <b>TONO 808</b> cambia la nota del bajo 808 y del tom. Toca el nombre de un sonido para silenciarlo.</li>
@@ -2062,13 +2079,28 @@ document.addEventListener('keydown',e=>{if(e.key==='Escape')menuShow(false)});
 /* ---------- Beats: caja de ritmos ---------- */
 const BT_ROWS=[['kick','BOMBO'],['snare','TAROLA'],['clap','PALMAS'],['hat','HI-HAT'],['ohat','HAT ABIERTO'],['tom','TOM'],['guiro','GÜIRO'],['b808','808']];
 const BT_PRE={
-  house:{n:'House',bpm:124,p:{kick:'x...x...x...x...',clap:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..x...x...x...x.'}},
-  dembow:{n:'Reggaetón',bpm:96,p:{kick:'x...x...x...x...',snare:'...x..x....x..x.',hat:'x.x.x.x.x.x.x.x.',b808:'x.......x.......'}},
-  cumbia:{n:'Cumbia',bpm:96,p:{kick:'x.......x.......',guiro:'x.xxx.xxx.xxx.xx',tom:'......x.......x.',snare:'....x.......x...'}},
-  hiphop:{n:'Hip-hop',bpm:90,p:{kick:'x......x..x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..............x.'}},
-  trap:{n:'Trap',bpm:140,p:{kick:'x.........x.....',clap:'........x.......',hat:'xxxxxxxxxxx.xxxx',b808:'x.........x...x.'}},
-  pop:{n:'Pop',bpm:110,p:{kick:'x.......x.x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.'}},
-  bachata:{n:'Bachata',bpm:128,p:{kick:'x.......x.......',guiro:'x.x.x.x.x.x.x.x.',tom:'..x..x....x..x..',snare:'......x.......x.'}}};
+  fbatalla:{g:'Freestyle',n:'Batalla (boom bap)',bpm:90,sw:.18,p:{kick:'x.....x...x.....',snare:'....x.......x...',hat:'x.xxx.x.x.xxx.x.',ohat:'..............x.'}},
+  fboombap:{g:'Freestyle',n:'Boom bap clásico',bpm:92,sw:.22,p:{kick:'x......x.x......',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'...............x'}},
+  foldschool:{g:'Freestyle',n:'Old school',bpm:96,sw:.1,p:{kick:'x.......x.x.....',clap:'....x.......x...',hat:'xxxxxxxxxxxxxxxx',tom:'..............x.'}},
+  flofi:{g:'Freestyle',n:'Lo-fi tranquilo',bpm:78,sw:.35,p:{kick:'x......x..x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',b808:'x.........x.....'}},
+  ftrap:{g:'Freestyle',n:'Trap de batalla',bpm:140,sw:0,p:{kick:'x.........x.....',clap:'........x.......',hat:'x.x.xxx.x.x.xxxx',b808:'x.........x...x.'}},
+  fdrill:{g:'Freestyle',n:'Drill',bpm:142,sw:0,p:{kick:'x.....x.........',snare:'........x.......',hat:'x..x..x...x..x..',b808:'x.....x...x...x.'}},
+  ftumbado:{g:'Freestyle',n:'Corrido tumbado',bpm:108,sw:.08,p:{kick:'x.......x.......',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',b808:'x..x....x..x....'}},
+  house:{g:'Fiesta',n:'House',bpm:124,sw:0,p:{kick:'x...x...x...x...',clap:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..x...x...x...x.'}},
+  techno:{g:'Fiesta',n:'Techno',bpm:130,sw:0,p:{kick:'x...x...x...x...',clap:'....x.......x...',hat:'xxxxxxxxxxxxxxxx',ohat:'..x...x...x...x.'}},
+  dnb:{g:'Fiesta',n:'Drum and bass',bpm:172,sw:0,p:{kick:'x.........x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.'}},
+  funk:{g:'Fiesta',n:'Funk carioca',bpm:130,sw:0,p:{kick:'x..x..x...x..x..',clap:'....x..x....x...',hat:'x.x.x.x.x.x.x.x.',tom:'......x.......x.'}},
+  afro:{g:'Fiesta',n:'Afrobeat',bpm:105,sw:.12,p:{kick:'x.....x...x.....',clap:'....x.......x...',hat:'x.xxx.xxx.xxx.xx',tom:'...x......x..x..'}},
+  pop:{g:'Fiesta',n:'Pop',bpm:110,sw:0,p:{kick:'x.......x.x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.'}},
+  rock:{g:'Fiesta',n:'Rock',bpm:115,sw:0,p:{kick:'x.......x.x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..............x.'}},
+  dembow:{g:'Latino',n:'Reggaetón',bpm:96,sw:0,p:{kick:'x...x...x...x...',snare:'...x..x....x..x.',hat:'x.x.x.x.x.x.x.x.',b808:'x.......x.......'}},
+  cumbia:{g:'Latino',n:'Cumbia',bpm:96,sw:0,p:{kick:'x.......x.......',guiro:'x.xxx.xxx.xxx.xx',tom:'......x.......x.',snare:'....x.......x...'}},
+  bachata:{g:'Latino',n:'Bachata',bpm:128,sw:0,p:{kick:'x.......x.......',guiro:'x.x.x.x.x.x.x.x.',tom:'..x..x....x..x..',snare:'......x.......x.'}},
+  merengue:{g:'Latino',n:'Merengue',bpm:150,sw:0,p:{kick:'x...x...x...x...',guiro:'xxxxxxxxxxxxxxxx',tom:'..x...x...x.xx.x'}},
+  salsa:{g:'Latino',n:'Salsa (clave 3-2)',bpm:95,sw:0,p:{tom:'x..x...x..x.x...',kick:'...x.......x....',guiro:'x.x.x.x.x.x.x.x.'}},
+  hiphop:{g:'Latino',n:'Hip-hop',bpm:90,sw:.15,p:{kick:'x......x..x.....',snare:'....x.......x...',hat:'x.x.x.x.x.x.x.x.',ohat:'..............x.'}},
+  trap:{g:'Latino',n:'Trap',bpm:140,sw:0,p:{kick:'x.........x.....',clap:'........x.......',hat:'xxxxxxxxxxx.xxxx',b808:'x.........x...x.'}}};
+const FS_WORDS=['fuego','espejo','calle','sueño','reloj','luna','dinero','familia','frontera','cielo','guerra','paz','futuro','pasado','corona','tormenta','camino','silencio','estrella','planeta','Júpiter','océano','montaña','ciudad','barrio','tacos','playa','desierto','lluvia','trueno','fantasma','dragón','rey','reina','ajedrez','espada','escudo','máscara','sombra','luz','noche','día','tiempo','memoria','corazón','alma','orgullo','respeto','envidia','traición','victoria','derrota','escuela','trabajo','jefe','lunes','domingo','fiesta','micrófono','tarima','público','batalla','rima','flow','ritmo','gallo','jaula','puerta','llave','cadena','libertad','vuelo','avión','tren','carretera','gasolina','motor','robot','internet','celular','redes','fama','moda','espejismo','laberinto','mapa','brújula','tesoro','pirata','mar','tiburón','selva','león','lobo','águila','serpiente','veneno','medicina','hospital','abuela','infancia','juguete','pelota','gol','campeón','medalla','oro','plata','cobre','ladrillo','cemento','grúa','tarima','caja','pizza','café','madrugada','alarma','vecino'];
 const bt={on:false,bpm:120,swing:0,follow:'free',slot:0,next:null,step:0,nextT:0,k:0,timer:null,mute:{},vis:[],slots:[]};
 const btBus=ctx.createGain();btBus.gain.value=.64;const btComp=ctx.createDynamicsCompressor();btComp.threshold.value=-10;btComp.ratio.value=4;btComp.attack.value=.003;btComp.release.value=.12;btBus.connect(btComp);btComp.connect(master);
 let btNoise=null;function btNz(){if(btNoise)return btNoise;const b=ctx.createBuffer(1,ctx.sampleRate,ctx.sampleRate),a=b.getChannelData(0);for(let i=0;i<a.length;i++)a[i]=Math.random()*2-1;return btNoise=b}
@@ -2091,7 +2123,7 @@ function btHit(id,t){const o=btBus,G=()=>ctx.createGain(),F=(ty,f,q)=>{const x=c
 function btBlank(){const p={};BT_ROWS.forEach(([id])=>p[id]=new Array(16).fill(0));return p}
 function btFrom(pre){const p=btBlank();for(const id in pre.p)p[id]=[...pre.p[id]].map(c=>c==='x'?1:0);return p}
 try{const sv=JSON.parse(localStorage.getItem('cabina-beats')||'null');if(sv&&Array.isArray(sv.slots)){bt.slots=sv.slots;bt.bpm=sv.bpm||120;bt.swing=sv.swing||0;bt.key=sv.key||0}}catch(_){}
-if(bt.slots.length!==4)bt.slots=[btFrom(BT_PRE.house),btFrom(BT_PRE.dembow),btFrom(BT_PRE.cumbia),btBlank()];
+if(bt.slots.length!==4)bt.slots=[btFrom(BT_PRE.fbatalla),btFrom(BT_PRE.dembow),btFrom(BT_PRE.cumbia),btFrom(BT_PRE.house)];
 function btSave(){try{localStorage.setItem('cabina-beats',JSON.stringify({slots:bt.slots,bpm:bt.bpm,swing:bt.swing,key:bt.key||0}))}catch(_){}}
 const btGrid=$('#btGrid');
 function btBuild(){btGrid.innerHTML='';const P=bt.slots[bt.slot];
@@ -2111,17 +2143,17 @@ function btSched(){if(!bt.on)return;const ahead=ctx.currentTime+.14,d=btDeck();
     bt.nextT=0;return}
   bt.lastDeck=null;const sx=60/bt.bpm/4;if(!bt.nextT||bt.nextT<ctx.currentTime-.2)bt.nextT=ctx.currentTime+.05;
   while(bt.nextT<ahead){const sw=bt.step%2?bt.swing*sx*.5:0;btStep(bt.step,bt.nextT+sw);bt.nextT+=sx;bt.step=(bt.step+1)%16}}
-function btStep(i,t){if(i===0&&bt.next!=null){bt.slot=bt.next;bt.next=null;btBuild()}const P=bt.slots[bt.slot];
+function btStep(i,t){if(i===0){bt.bar=(bt.bar||0)+1;fsBar(t)}if(i===0&&bt.next!=null){bt.slot=bt.next;bt.next=null;btBuild()}const P=bt.slots[bt.slot];
   for(const [id] of BT_ROWS)if(P[id][i]&&!bt.mute[id])btHit(id,t);bt.vis.push([t,i])}
 function btPlay(on){bt.on=on;$('#btPlay').textContent=on?'■ PARAR':'▶ TOCAR';$('#btPlay').setAttribute('aria-pressed',String(on));
-  if(on){unlock();bt.step=0;bt.nextT=0;bt.k=0;bt.lastDeck=null;bt.timer=setInterval(btSched,25);btSched()}
+  if(on){unlock();bt.step=0;bt.nextT=0;bt.k=0;bt.bar=0;bt.lastDeck=null;bt.timer=setInterval(btSched,25);btSched()}
   else{clearInterval(bt.timer);bt.vis=[];btGrid.querySelectorAll('.now').forEach(c=>c.classList.remove('now'))}}
 $('#btPlay').onclick=()=>btPlay(!bt.on);
 $('#btClear').onclick=e=>{const b=e.currentTarget;if(!b.dataset.ask){b.dataset.ask='1';b.textContent='¿BORRAR?';setTimeout(()=>{delete b.dataset.ask;b.textContent='BORRAR'},3000);return}
   delete b.dataset.ask;b.textContent='BORRAR';bt.slots[bt.slot]=btBlank();btSave();btBuild()};
 document.querySelectorAll('.bt-slot').forEach(b=>b.onclick=()=>{const s=+b.dataset.s;if(bt.on&&s!==bt.slot){bt.next=s;status(`Cambia al patrón ${'ABCD'[s]} al empezar el compás`);document.querySelectorAll('.bt-slot').forEach(x=>x.classList.toggle('queued',+x.dataset.s===s))}else{bt.slot=s;btBuild()}});
-{const sel=$('#btPre');for(const k in BT_PRE){const o=document.createElement('option');o.value=k;o.textContent=BT_PRE[k].n+' · '+BT_PRE[k].bpm;sel.appendChild(o)}
-  sel.onchange=()=>{const k=sel.value;if(!k)return;const pr=BT_PRE[k];bt.slots[bt.slot]=btFrom(pr);if(bt.follow==='free'){bt.bpm=pr.bpm;btBpmUI()}btSave();btBuild();sel.value='';status(`Patrón ${'ABCD'[bt.slot]}: ${pr.n}`)}}
+{const sel=$('#btPre'),grp={};for(const k in BT_PRE){const pr=BT_PRE[k];if(!grp[pr.g]){grp[pr.g]=document.createElement('optgroup');grp[pr.g].label=pr.g;sel.appendChild(grp[pr.g])}const o=document.createElement('option');o.value=k;o.textContent=pr.n+' · '+pr.bpm;grp[pr.g].appendChild(o)}
+  sel.onchange=()=>{const k=sel.value;if(!k)return;const pr=BT_PRE[k];bt.slots[bt.slot]=btFrom(pr);bt.swing=pr.sw||0;$('#btSwing').value=bt.swing;$('#btSwingO').textContent=Math.round(bt.swing*100)+'%';if(bt.follow==='free'){bt.bpm=pr.bpm;btBpmUI()}btSave();btBuild();sel.value='';status(`Patrón ${'ABCD'[bt.slot]}: ${pr.n}`)}}
 function btBpmUI(){$('#btBpmO').textContent=Math.round(btTempo()*10)/10}
 const btSetBpm=v=>{bt.bpm=clamp(Math.round(v),60,200);btSave();btBpmUI()};
 $('#btDn').onclick=()=>btSetBpm(bt.bpm-1);$('#btUp').onclick=()=>btSetBpm(bt.bpm+1);
@@ -2136,6 +2168,19 @@ function btTick(){if(!bt.on)return;const now=ctx.currentTime;let cur=null;while(
   if(cur!=null&&!$('.beats').hidden){btGrid.querySelectorAll('.now').forEach(c=>c.classList.remove('now'));btGrid.querySelectorAll(`.bt-cell[data-i="${cur}"]`).forEach(c=>c.classList.add('now'))}
   if(frameN%15===0)btBpmUI();if(bt.next==null)document.querySelectorAll('.bt-slot.queued').forEach(x=>x.classList.remove('queued'))}
 btBuild();btBpmUI();
+/* Freestyle: palabras y rondas */
+const fs={last:[],round:0,end:0,timer:null};
+function fsWord(){let w,tries=0;do{w=FS_WORDS[Math.floor(Math.random()*FS_WORDS.length)];tries++}while(fs.last.includes(w)&&tries<20);fs.last.push(w);if(fs.last.length>25)fs.last.shift();
+  const el=$('#fsW');el.textContent=w;el.classList.remove('pop');void el.offsetWidth;el.classList.add('pop');if(!party.hidden)flashWord(w)}
+function flashWord(w){const f=$('#pFlash');if(!f)return;f.innerHTML='<span></span>';f.firstChild.textContent=w.toUpperCase();f.hidden=false;clearTimeout(fs.ft);fs.ft=setTimeout(()=>{f.hidden=true},2500)}
+function fsBar(t){const n=+$('#fsAuto').value;if(!n||!bt.bar||((bt.bar-1)%n))return;setTimeout(fsWord,Math.max(0,(t-ctx.currentTime)*1000))}
+$('#fsWordB').onclick=fsWord;
+function fsRoundStop(msg){clearInterval(fs.timer);fs.timer=null;$('#fsRound').setAttribute('aria-pressed','false');$('#fsRound').textContent='RONDA';if(msg){const t=$('#fsT');t.textContent=msg;t.classList.add('end')}}
+$('#fsRound').onclick=()=>{if(fs.timer){fsRoundStop('');$('#fsT').textContent='';return}
+  const len=+$('#fsLen').value;fs.end=performance.now()+len*1000;fs.round++;$('#fsT').classList.remove('end');$('#fsRound').setAttribute('aria-pressed','true');$('#fsRound').textContent='■ PARAR';
+  if(!bt.on)btPlay(true);fsWord();
+  fs.timer=setInterval(()=>{const left=Math.max(0,fs.end-performance.now());$('#fsT').textContent=fmtR(left/1000).slice(1);
+    if(left<=0){fsRoundStop('¡TIEMPO!');status(`Se acabó la ronda ${fs.round}.`);try{const t=ctx.currentTime+.02;btHit('tom',t);btHit('tom',t+.18);btHit('clap',t+.36)}catch(_){}}},200)};
 
 /* ---------- Video de YouTube dentro de la página ---------- */
 var yt={p:null,vid:null,wait:[],loading:false};
