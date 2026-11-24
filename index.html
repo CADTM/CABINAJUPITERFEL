@@ -2627,6 +2627,7 @@ $('#gNew').onclick=()=>{gst.topic=gTopic(true);gConnect();status('Código nuevo:
 $('#gCopy').onclick=async()=>{try{await navigator.clipboard.writeText(gst.url);status('Enlace copiado.')}catch(_){status('Copia el enlace: '+gst.url)}};
 
 function guestMain(){let topic=new URLSearchParams(location.search).get('invitado')||'';try{if(topic)sessionStorage.setItem('cabina-invitado',topic);else topic=sessionStorage.getItem('cabina-invitado')||''}catch(_){}
+  if(!/^cabina-[a-z0-9]{12,32}$/.test(topic))topic=''; // seguridad: solo códigos válidos de la Cabina
   try{history.replaceState(null,'',location.pathname)}catch(_){}document.title='Anótate · Cabina Júpiter';document.body.classList.add('guestmode');
   const g=document.createElement('div');g.id='guest';
   g.innerHTML='<div class="g-card"><div class="brand"><span class="jup" aria-hidden="true"></span><span class="logo">CABINA JÚPITER</span></div><h1>Anótate para cantar</h1>'+
